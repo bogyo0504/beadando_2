@@ -36,7 +36,7 @@ public:
 
     Tile operator[](const GridPosition &position) const;
 
-    bool checkConnection(GridPositionStep step, const GridPosition position, const Tile &tile) const;
+    bool checkConnection(GridPositionStep step, const GridPosition position) const;
 
     BuildState addElementFromStock(const BuildState& state) ;
 

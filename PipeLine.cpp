@@ -47,7 +47,8 @@ Tile PipeLine::operator[](const GridPosition &position) const {
 
 //Todo: Tesztelni a függvényt
 
-bool PipeLine::checkConnection(GridPositionStep step, const GridPosition position, const Tile &tile) const {
+bool PipeLine::checkConnection(GridPositionStep step, const GridPosition position) const {
+    const Tile tile = (*this)[position];
     const Tile other1 = (*this)[position.step(step)];
     const Tile other2 = (*this)[position.step(step).step(OTHER_STACK)];
     int connections = other1.getConnections() | other2.getConnections();
@@ -90,7 +91,7 @@ BuildState PipeLine::addElementFromStock(const BuildState &state) {
     }
     //ha az állapot befejezett, szimplán a befejezett állapotot fogja visszaadni
     if (state.getPosition() == INVALID_POSITION) {
-        return {INVALID_POSITION, state.getStock(), true, PostIt};
+        return {INVALID_POSITION, state.getStock(), true, PostIt, 0};
     }
     //ha a pozíció invalid, tehát olyan helyre akarunk Tile-t tenni, amelyre nem lehet, akkor egy olyan
     //állapottal tér vissza, amely az invalid pozíciót, az adott állapotban lévő készletet adja vissza,
@@ -102,7 +103,7 @@ BuildState PipeLine::addElementFromStock(const BuildState &state) {
         while (!isEmpty(currentPosition)) {
             ++currentPosition;
             if (currentPosition == INVALID_POSITION) {
-                return {INVALID_POSITION, state.getStock(), true, PostIt};
+                return {INVALID_POSITION, state.getStock(), true, PostIt, 0};
             }
         }
     }
@@ -115,23 +116,28 @@ BuildState PipeLine::addElementFromStock(const BuildState &state) {
     if (state.getStock().contains(state.getCurrentTile())) {
         Stock newStock = state.getStock() - state.getCurrentTile();
         if (!canPut(currentPosition, state.getCurrentTile())) {
-            Tile newTile = state.getStock().getNextTile(state.getCurrentTile());
-            if (newTile == PostIt) {
-                return {INVALID_POSITION, state.getStock(), true, PostIt};
+            if (state.getRotation() == 3) {
+                Tile newTile = state.getStock().getNextTile(state.getCurrentTile());
+
+                if (newTile == PostIt) {
+                    return {INVALID_POSITION, state.getStock(), true, PostIt, 0};
+                } else {
+                    return {currentPosition, state.getStock(), false, newTile, 0};
+                }
             } else {
-                return {currentPosition, state.getStock(), false, newTile};
+                return {currentPosition, newStock, false, state.getCurrentTile(), (Rotation) (state.getRotation() + 1)};
             }
         } else {
             put(currentPosition, state.getCurrentTile());
             states.push(std::make_shared<BuildState>(state));
-            return {++currentPosition, newStock, false, PostIt};
+            return {++currentPosition, newStock, false, PostIt, 0};
         }
     } else {
         Tile newTile = state.getStock().getNextTile(state.getCurrentTile());
         if (newTile == PostIt) {
-            return {INVALID_POSITION, state.getStock(), true, PostIt};
+            return {INVALID_POSITION, state.getStock(), true, PostIt, 0};
         } else {
-            return {currentPosition, state.getStock(), false, newTile};
+            return {currentPosition, state.getStock(), false, newTile, 0};
         }
     }
 }

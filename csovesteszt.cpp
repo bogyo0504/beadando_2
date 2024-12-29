@@ -19,6 +19,12 @@ TEST_CASE("Teszteljük a Tile funkcióit") {
     CHECK(t1.getType() == TileType::NORMAL);
     CHECK(!t3.isCorner());
     CHECK(t3 > t1);
+    CHECK(t1.rotate(1).getConnections() == 9);
+    CHECK(t1.rotate(2).getConnections() == 12);
+    CHECK(t1.rotate(3).getConnections() == 6);
+    CHECK(t3.rotate(1).getConnections() == 10);
+    CHECK(t3.rotate(2).getConnections() == 5);
+    CHECK(t3.rotate(3).getConnections() == 10);
 }
 
 TEST_CASE("Teszteljük a GridPosition funkcióit") {
@@ -113,13 +119,13 @@ TEST_CASE("Teszteljük a PipeLine addElementFromStock funkcióját") {
     stock = stock.addTile(t3, 1);
     GridPosition gp1 = GridPosition(grid, 0, 0, 0);
     PipeLine pipeLine = PipeLine(grid);
-    BuildState state = BuildState(gp1, stock, false, t1);
+    BuildState state = BuildState(gp1, stock, false, t1,0);
     BuildState state1 = pipeLine.addElementFromStock(state);
     CHECK(state1.getPosition().getStack() == 1);
     CHECK(state1.getCurrentTile() == PostIt);
     CHECK(!state1.getIsReady());
     // Kihagyjuk a PostIt behelyezést
-    BuildState state2 = BuildState(state1.getPosition(), state1.getStock(), false, t1);
+    BuildState state2 = BuildState(state1.getPosition(), state1.getStock(), false, t1,0);
     BuildState state3 = pipeLine.addElementFromStock(state2);
     CHECK(state3.getPosition().getStack() == 1);
     CHECK(state3.getCurrentTile() == t2);
@@ -135,7 +141,7 @@ TEST_CASE("Teszteljük a PipeLine addElementFromStock funkcióját") {
     CHECK(state5.getPosition().getHorizontal()==1);
     CHECK(state5.getPosition().getVertical()==0);
     // Kihagyjuk a PostIt behelyezést
-    BuildState state6 = BuildState(state5.getPosition(), state5.getStock(), false, t1);
+    BuildState state6 = BuildState(state5.getPosition(), state5.getStock(), false, t1,0);
     BuildState state7 = pipeLine.addElementFromStock(state6);
     CHECK(state7.getPosition().getStack() == 0);
     CHECK(state7.getCurrentTile() == t2);

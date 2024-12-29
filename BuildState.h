@@ -8,6 +8,7 @@
 #include "Stock.h"
 #include "GridPosition.h"
 
+
 //Adott pozícióban az adott stockból kell rakni, illetve jelöljük, ha készen van a puzzle
 
 class BuildState {
@@ -16,9 +17,13 @@ private:
     Stock stock;
     bool isReady;
     Tile currentTile;
-
+    Rotation rotation;
 public:
-    BuildState(const GridPosition &position, const Stock &stock, const bool isReady, const Tile currentTile);
+    BuildState(const GridPosition &position, const Stock &stock, const bool isReady, const Tile currentTile, Rotation rotation);
+
+    Rotation getRotation() const;
+
+    void setRotation(Rotation rotation);
 
     BuildState(const BuildState &buildState);
 
@@ -29,6 +34,7 @@ public:
     const bool getIsReady() const;
 
     const Tile &getCurrentTile() const;
+
 
 
 };

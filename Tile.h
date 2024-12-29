@@ -4,6 +4,10 @@
 
 #ifndef BEADANDO_II_TILE_H
 #define BEADANDO_II_TILE_H
+
+#define ROTATION_MASK 3
+typedef short int Rotation;
+
 #define CSP_TOP 8
 #define CSP_RIGHT 4
 #define CSP_BOTTOM 2
@@ -68,6 +72,8 @@ public:
     bool isCorner() const;
 
     bool isPostIt() const;
+
+    Tile rotate(Rotation rotation) const;
 };
 
 

@@ -74,5 +74,15 @@ bool Tile::isPostIt() const {
     return connections == 0;
 }
 
+Tile Tile::rotate(Rotation rotation) const {
+    int newConnections = connections;
+    for (int i = 0; i < rotation; ++i) {
+        int wasLeft = newConnections & 1;
+        newConnections >>= 1;
+        newConnections |= wasLeft << 3;
+    }
+    return Tile(newConnections, type, color);
+}
+
 
 
