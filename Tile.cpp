@@ -5,7 +5,12 @@
 #include "Tile.h"
 
 
-Tile::Tile(int connections, TileType type) : connections(connections), type(type) {}
+Tile::Tile(int connections, TileType type, TileColor color) : connections(connections), type(type), color(color) {}
+
+Tile::Tile() : Tile(0, NORMAL, NONE) {}
+
+Tile::Tile(int connections, TileType type) : Tile(connections, type, NONE) {}
+
 
 int Tile::getConnections() const {
     return connections;
@@ -23,9 +28,18 @@ void Tile::setType(TileType type) {
     Tile::type = type;
 }
 
+TileColor Tile::getColor() const {
+    return color;
+}
+
+void Tile::setColor(TileColor color) {
+    Tile::color = color;
+}
+
+
 bool Tile::operator==(const Tile &rhs) const {
     return connections == rhs.connections &&
-           type == rhs.type;
+           type == rhs.type && color == rhs.color;
 }
 
 bool Tile::operator!=(const Tile &rhs) const {
@@ -60,4 +74,5 @@ bool Tile::isPostIt() const {
     return connections == 0;
 }
 
-Tile::Tile() : Tile(0, NORMAL){}
+
+

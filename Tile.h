@@ -9,13 +9,16 @@
 #define CSP_BOTTOM 2
 #define CSP_LEFT 1
 
-enum TileType{
+enum TileType {
     NORMAL, SOURCE, SINK, VALVE
 };
 /**
  * A Tile class reprezentálja a játéktábla egy mezőjét.
  */
 
+enum TileColor {
+    NONE, RED, CIAN, BLUE, GREEN, YELLOW
+};
 
 
 class Tile {
@@ -27,11 +30,17 @@ private:
      */
     int connections;
     TileType type;
-
+    TileColor color;
 public:
     Tile(int connections, TileType type);
 
+    Tile(int connections, TileType type, TileColor color);
+
     Tile();
+
+    TileColor getColor() const;
+
+    void setColor(TileColor color);
 
     int getConnections() const;
 
