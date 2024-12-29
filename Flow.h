@@ -4,16 +4,15 @@
 
 #ifndef BEADANDO_II_FLOW_H
 #define BEADANDO_II_FLOW_H
-#include "QSet"
+#include "QMap"
 #include "GridPosition.h"
 #include "PipeLine.h"
+#include "Phase.h"
 
 class Flow {
-    QSet<GridPosition> positions;
-
+    QMap<GridPosition,TileColor> positions;
 public:
-
-    void makeFlow(const PipeLine &pipeLine);
+    bool makeFlow(const PipeLine &pipeLine, const Phase &phase);
 };
 
 

@@ -164,6 +164,7 @@ TEST_CASE("Teszteljük a PipeLine addElementFromStock funkcióját") {
     CHECK(pipeLine[GridPosition(grid, 0, 1, 0)] == t2);
     CHECK(pipeLine[GridPosition(grid, 1, 1, 0)] == PostIt);
 
+
 // 1. **Objektumok inicializálása**
 //  - *Rács*: Egy 2x1 méretű rács jön létre.
 //  - *Készlet*: Egy készlet inicializálódik, amelybe három csempe (t1, t2 és t3) kerül.
@@ -199,4 +200,33 @@ TEST_CASE("Teszteljük a PipeLine addElementFromStock funkcióját") {
 // - (0, 1, 0) pozícióban t2 található.
 // - (1, 1, 0) pozícióban PostIt található.
 
+
+}
+
+
+TEST_CASE("Teszteljük a Pipeline to/from QString funkcióit") {
+    PipeLine p1 = PipeLine::fromString(" .---------.   \n"
+                                       " |         |   \n"
+                                       " |         |   \n"
+                                       " |         |   \n"
+                                       " '---------'   \n");
+    std::cout << p1.toQString().toStdString();
+    CHECK(p1.toQString() == " .---------.   \n"
+                            " |         |   \n"
+                            " |         |   \n"
+                            " |         |   \n"
+                            " '---------'   \n");
+    PipeLine p2 = PipeLine::fromString(
+                                      " .-oB------.   \n"
+                                       " |         |   \n"
+                                       " |------0--|   \n"
+                                       " |         |   \n"
+                                       " '---------' cG\n");
+    std::cout << p2.toQString().toStdString();
+
+    CHECK(p2.toQString() == " .-oB------.   \n"
+                            " |         |   \n"
+                            " |------0--|   \n"
+                            " |         |   \n"
+                            " '---------' cG\n");
 }

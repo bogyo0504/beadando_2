@@ -29,6 +29,14 @@ set(PROJECT_SOURCES
         PipeLine.cpp
         BuildState.h
         BuildState.cpp
+        Phase.cpp
+        Phase.h
+        Flow.cpp
+        Flow.h
+        PipeLineValidator.cpp
+        PipeLineValidator.h
+        PipeLineBuilder.cpp
+        PipeLineBuilder.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

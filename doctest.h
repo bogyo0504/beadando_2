@@ -1083,7 +1083,7 @@ struct StringMaker : public detail::StringMakerBase<
 
 #ifndef DOCTEST_STRINGIFY
 #ifdef DOCTEST_CONFIG_DOUBLE_STRINGIFY
-#define DOCTEST_STRINGIFY(...) toString(toString(__VA_ARGS__))
+#define DOCTEST_STRINGIFY(...) toString(toQString(__VA_ARGS__))
 #else
 #define DOCTEST_STRINGIFY(...) toString(__VA_ARGS__)
 #endif
@@ -1092,11 +1092,11 @@ struct StringMaker : public detail::StringMakerBase<
 template <typename T>
 String toString() {
 #if DOCTEST_CLANG == 0 && DOCTEST_GCC == 0 && DOCTEST_ICC == 0
-    String ret = __FUNCSIG__; // class doctest::String __cdecl doctest::toString<TYPE>(void)
+    String ret = __FUNCSIG__; // class doctest::String __cdecl doctest::toQString<TYPE>(void)
     String::size_type beginPos = ret.find('<');
     return ret.substr(beginPos + 1, ret.size() - beginPos - static_cast<String::size_type>(sizeof(">(void)")));
 #else
-    String ret = __PRETTY_FUNCTION__; // doctest::String toString() [with T = TYPE]
+    String ret = __PRETTY_FUNCTION__; // doctest::String toQString() [with T = TYPE]
     String::size_type begin = ret.find('=') + 2;
     return ret.substr(begin, ret.size() - begin - 1);
 #endif
@@ -1108,12 +1108,12 @@ String toString(const DOCTEST_REF_WRAP(T) value) {
 }
 
 #ifdef DOCTEST_CONFIG_TREAT_CHAR_STAR_AS_STRING
-DOCTEST_INTERFACE String toString(const char* in);
+DOCTEST_INTERFACE String toQString(const char* in);
 #endif // DOCTEST_CONFIG_TREAT_CHAR_STAR_AS_STRING
 
 #if DOCTEST_MSVC >= DOCTEST_COMPILER(19, 20, 0)
 // see this issue on why this is needed: https://github.com/doctest/doctest/issues/183
-DOCTEST_INTERFACE String toString(const std::string& in);
+DOCTEST_INTERFACE String toQString(const std::string& in);
 #endif // VS 2019
 
 DOCTEST_INTERFACE String toString(String in);
@@ -3929,12 +3929,12 @@ namespace detail {
 }
 
 #ifdef DOCTEST_CONFIG_TREAT_CHAR_STAR_AS_STRING
-String toString(const char* in) { return String("\"") + (in ? in : "{null string}") + "\""; }
+String toQString(const char* in) { return String("\"") + (in ? in : "{null string}") + "\""; }
 #endif // DOCTEST_CONFIG_TREAT_CHAR_STAR_AS_STRING
 
 #if DOCTEST_MSVC >= DOCTEST_COMPILER(19, 20, 0)
 // see this issue on why this is needed: https://github.com/doctest/doctest/issues/183
-String toString(const std::string& in) { return in.c_str(); }
+String toQString(const std::string& in) { return in.c_str(); }
 #endif // VS 2019
 
 String toString(String in) { return in; }

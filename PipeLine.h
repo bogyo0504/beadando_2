@@ -43,6 +43,16 @@ public:
     bool isEmpty(const GridPosition &position) const;
 
     bool clear(const GridPosition &position);
+
+    QList <GridPosition> getSourcePositions(TileColor color) const;
+
+    QList <GridPosition> getSinkPositions(TileColor color) const;
+
+    QString toQString() const;
+
+    static PipeLine fromString(const QString &string);
+private:
+    static QString typeAndColorToChar(Tile tile, bool hasRightItem);
 };
 
 

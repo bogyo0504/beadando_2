@@ -173,3 +173,199 @@ bool PipeLine::clear(const GridPosition &position) {
     }
     return false;
 }
+
+QList<GridPosition> PipeLine::getSourcePositions(TileColor color) const {
+    GridPosition currentPosition = GridPosition(grid, 0, 0, 0);
+    QList<GridPosition> result;
+    while (currentPosition != INVALID_POSITION) {
+        Tile currentTile = (*this)[currentPosition];
+        if (currentTile.getColor() == color && currentTile.getType() == SOURCE) {
+            result.push_back(currentPosition);
+        }
+        ++currentPosition;
+    }
+    return result;
+}
+
+QList<GridPosition> PipeLine::getSinkPositions(TileColor color) const {
+    GridPosition currentPosition = GridPosition(grid, 0, 0, 0);
+    QList<GridPosition> result;
+    while (currentPosition != INVALID_POSITION) {
+        Tile currentTile = (*this)[currentPosition];
+        if (currentTile.getColor() == color && currentTile.getType() == SINK) {
+            result.push_back(currentPosition);
+        }
+        ++currentPosition;
+    }
+    return result;
+}
+
+QString PipeLine::toQString() const {
+    QString result;
+    for (int i = 0; i < grid.getHeight(); i++) {
+        for (int j = 0; j < grid.getWidth(); j++) {
+            GridPosition currentPosition = GridPosition(grid, 0, j, i);
+            Tile currentTile = (*this)[currentPosition];
+            Tile otherTile = (*this)[currentPosition.step(OTHER_STACK)];
+            if (currentTile.isPostIt()) {
+                result += "     ";
+            } else {
+                if (currentTile.isCorner() && otherTile.isCorner()) {
+                    result += "-:-" + typeAndColorToChar(currentTile, true);
+                } else {
+                    int leftSide = currentTile.getConnections() & CSP_LEFT;
+                    int rightSide = currentTile.getConnections() & CSP_RIGHT;
+                    int topSide = currentTile.getConnections() & CSP_TOP;
+                    int bottomSide = currentTile.getConnections() & CSP_BOTTOM;
+                    if (leftSide != 0) {
+                        result += "-";
+                    } else {
+                        result += " ";
+                    }
+                    if (topSide != 0) {
+                        if (bottomSide != 0) {
+                            result += "|";
+                        } else {
+                            result += "'";
+                        }
+                    } else {
+                        if (bottomSide != 0) {
+                            result += ".";
+                        } else {
+                            if (leftSide != 0 && rightSide != 0) {
+                                result += "-";
+                            } else {
+                                result += " ";
+                            }
+                        }
+                    }
+                    if (rightSide != 0) {
+                        result += "-";
+                    } else {
+                        result += " ";
+                    }
+                    result += typeAndColorToChar(currentTile, rightSide != 0);
+                }
+            }
+        }
+        result += "\n";
+    }
+    return result;
+}
+
+QString PipeLine::typeAndColorToChar(Tile tile, bool hasRightItem) {
+    QString result;
+    switch (tile.getType()) {
+        case NORMAL:
+            result += hasRightItem ? "-" : " ";
+            break;
+        case SOURCE:
+            result += "o";
+            break;
+        case SINK:
+            result += "c";
+            break;
+        case VALVE:
+            result += "0";
+            break;
+    }
+    switch (tile.getColor()) {
+        case RED:
+            result += "R";
+            break;
+        case CIAN:
+            result += "C";
+            break;
+        case BLUE:
+            result += "B";
+            break;
+        case GREEN:
+            result += "G";
+            break;
+        case YELLOW:
+            result += "Y";
+            break;
+        case NONE:
+            result += hasRightItem ? "-" : " ";
+            break;
+    }
+    return result;
+}
+
+PipeLine PipeLine::fromString(const QString &string) {
+    QMap<GridPosition, Tile> tiles;
+    QStringList AllLines = string.split("\n");
+    QStringList lines;
+
+    for (int i = 0; i < AllLines.size(); i++) {
+        if (!AllLines[i].isEmpty()) {
+            lines.push_back(AllLines[i]);
+        }
+    }
+
+    if (lines.empty()) {
+        throw std::invalid_argument("Invalid string: " + string.toStdString());
+    }
+    Grid grid = Grid(lines[0].size() / 5, lines.size());
+
+    for (int i = 0; i < lines.size(); i++) {
+        QString line = lines[i];
+
+        if (line.size() / 5 != grid.getWidth() || line.size() % 5 != 0) {
+            throw std::invalid_argument("Invalid string: " + line.toStdString());
+        }
+
+        for (int j = 0; j < line.size(); j += 5) {
+            TileType type = NORMAL;
+            TileColor color = NONE;
+            int connections = 0;
+            if (line[j] == '-') {
+                connections |= CSP_LEFT;
+            }
+            if (line[j + 1] == '|') {
+                connections |= CSP_TOP;
+                connections |= CSP_BOTTOM;
+            }
+            if (line[j + 1] == '.') {
+                connections |= CSP_BOTTOM;
+            }
+            if (line[j + 1] == '\'') {
+                connections |= CSP_TOP;
+            }
+            if (line[j + 2] == '-') {
+                connections |= CSP_RIGHT;
+            }
+            if (line[j + 3] == 'o') {
+                type = SOURCE;
+            }
+            if (line[j + 3] == 'c') {
+                type = SINK;
+            }
+            if (line[j + 3] == '0') {
+                type = VALVE;
+            }
+            if (line[j + 4] == 'R') {
+                color = RED;
+            }
+            if (line[j + 4] == 'C') {
+                color = CIAN;
+            }
+            if (line[j + 4] == 'B') {
+                color = BLUE;
+            }
+            if (line[j + 4] == 'G') {
+                color = GREEN;
+            }
+            if (line[j + 4] == 'Y') {
+                color = YELLOW;
+            }
+            Tile tile = Tile(connections, type, color);
+            GridPosition currentPosition = GridPosition(grid, 0, j / 5, i);
+            tiles[currentPosition] = tile;
+        }
+    }
+    PipeLine pipeLine = PipeLine(grid);
+    pipeLine.tiles = tiles;
+    return pipeLine;
+}
+
