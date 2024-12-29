@@ -64,7 +64,7 @@ endif()
 
 
 # make doctest available in the project, running csovesteszt.cpp
-add_executable(csovesteszt csovesteszt.cpp Tile.cpp GridPosition.cpp Grid.cpp PipeLine.cpp Stock.cpp BuildState.cpp)
+add_executable(csovesteszt csovesteszt.cpp Tile.cpp GridPosition.cpp Grid.cpp PipeLine.cpp Stock.cpp BuildState.cpp Flow.cpp Phase.cpp)
 
 
 target_link_libraries(beadando_II PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)

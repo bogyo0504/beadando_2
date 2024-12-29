@@ -10,6 +10,12 @@
 class Phase {
     QSet<TileColor> activeColors;
 public:
+    explicit Phase(const QSet<TileColor> &activeColors);
+
+    Phase();
+
+    Phase(TileColor color);
+
     QSet<TileColor> getActiveColors() const;
 };
 

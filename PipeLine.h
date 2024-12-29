@@ -19,12 +19,13 @@
 class PipeLine {
 private:
     const Grid grid;
-     QMap<GridPosition, Tile> tiles;
-     QStack<std::shared_ptr<BuildState>> states;
+    QMap<GridPosition, Tile> tiles;
+    QStack<std::shared_ptr<BuildState>> states;
 public:
 
+    const Grid &getGrid() const;
 
-    PipeLine& put(const GridPosition position, const Tile& tile);
+    PipeLine &put(const GridPosition position, const Tile &tile);
 
     explicit PipeLine(const Grid &grid);
 
@@ -32,25 +33,30 @@ public:
      * Megvizsgálja, hogy az adott pozícióra lehet-e rakni a megadott Tile-t.
 
      */
-    bool canPut(const GridPosition position, const Tile& tile) const;
+    bool canPut(const GridPosition position, const Tile &tile) const;
 
     Tile operator[](const GridPosition &position) const;
 
-    bool checkConnection(GridPositionStep step, const GridPosition position) const;
+    bool checkConnection(const GridPosition &position, const GridPositionStep step, bool otherLevel) const;
 
-    BuildState addElementFromStock(const BuildState& state) ;
+    BuildState addElementFromStock(const BuildState &state);
 
     bool isEmpty(const GridPosition &position) const;
 
     bool clear(const GridPosition &position);
 
-    QList <GridPosition> getSourcePositions(TileColor color) const;
+    QList<GridPosition> getSourcePositions(TileColor color) const;
 
-    QList <GridPosition> getSinkPositions(TileColor color) const;
+    QList<GridPosition> getSinkPositions(TileColor color) const;
+
+    QList<GridPosition> getValvePositions() const;
+
 
     QString toQString() const;
 
     static PipeLine fromString(const QString &string);
+
+
 private:
     static QString typeAndColorToChar(Tile tile, bool hasRightItem);
 };

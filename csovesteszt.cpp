@@ -6,6 +6,7 @@
 #include "GridPosition.h"
 #include "Stock.h"
 #include "PipeLine.h"
+#include "Flow.h"
 
 TEST_CASE("Teszteljük a Tile funkcióit") {
     Tile t1 = Tile(3, TileType::NORMAL);
@@ -229,4 +230,19 @@ TEST_CASE("Teszteljük a Pipeline to/from QString funkcióit") {
                             " |------0--|   \n"
                             " |         |   \n"
                             " '---------' cG\n");
+
+    PipeLine p3 = PipeLine::fromString(
+            ""
+            " .-oB---0--. oG\n"
+            " | 0       |   \n"
+            " |------0--|   \n"
+            " |         |   \n"
+            " '-cB---0--' cG\n");
+    Flow f1;
+    Phase ph1 = Phase({BLUE, GREEN});
+
+    CHECK(f1.makeFlow(p3, ph1));
+
+    std::cout << f1.toQString().toStdString();
+
 }

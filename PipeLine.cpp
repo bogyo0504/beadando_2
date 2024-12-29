@@ -47,13 +47,13 @@ Tile PipeLine::operator[](const GridPosition &position) const {
 
 //Todo: Tesztelni a függvényt
 
-bool PipeLine::checkConnection(GridPositionStep step, const GridPosition position) const {
+bool PipeLine::checkConnection(const GridPosition &position, const GridPositionStep step, bool otherLevel) const {
     const Tile tile = (*this)[position];
-    const Tile other1 = (*this)[position.step(step)];
-    const Tile other2 = (*this)[position.step(step).step(OTHER_STACK)];
-    int connections = other1.getConnections() | other2.getConnections();
+    const Tile other = otherLevel ?  (*this)[position.step(step).step(OTHER_STACK)] : (*this)[position.step(step)];
+    //const Tile other2 = (*this)[position.step(step).step(OTHER_STACK)];
+    int connections = other.getConnections(); // | other2.getConnections();
 
-    int following = connections;        //ha jobbre vagy lefele megyünk
+    int following = connections;        //ha jobbra vagy lefele megyünk
     int previous = tile.getConnections();
 
     if (step == LEFT || step == UP) {   // ha balra vagy felfele megyünk
@@ -182,7 +182,7 @@ QList<GridPosition> PipeLine::getSourcePositions(TileColor color) const {
         if (currentTile.getColor() == color && currentTile.getType() == SOURCE) {
             result.push_back(currentPosition);
         }
-        ++currentPosition;
+        currentPosition=++currentPosition;
     }
     return result;
 }
@@ -195,7 +195,7 @@ QList<GridPosition> PipeLine::getSinkPositions(TileColor color) const {
         if (currentTile.getColor() == color && currentTile.getType() == SINK) {
             result.push_back(currentPosition);
         }
-        ++currentPosition;
+        currentPosition=++currentPosition;
     }
     return result;
 }
@@ -367,5 +367,22 @@ PipeLine PipeLine::fromString(const QString &string) {
     PipeLine pipeLine = PipeLine(grid);
     pipeLine.tiles = tiles;
     return pipeLine;
+}
+
+QList<GridPosition> PipeLine::getValvePositions() const{
+    QList<GridPosition> result;
+    GridPosition currentPosition = GridPosition(grid, 0, 0, 0);
+    while (currentPosition != INVALID_POSITION) {
+        Tile currentTile = (*this)[currentPosition];
+        if (currentTile.getType() == VALVE) {
+            result.push_back(currentPosition);
+        }
+        currentPosition = ++currentPosition;
+    }
+    return result;
+}
+
+const Grid &PipeLine::getGrid() const {
+    return grid;
 }
 
