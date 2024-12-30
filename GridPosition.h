@@ -5,6 +5,7 @@
 #ifndef BEADANDO_II_GRIDPOSITION_H
 #define BEADANDO_II_GRIDPOSITION_H
 
+#include <QString>
 #include "Grid.h"
 enum GridPositionStep {
     OTHER_STACK, UP, DOWN, LEFT, RIGHT
@@ -51,6 +52,8 @@ public:
     GridPosition step(const GridPositionStep step) const;
 
     bool isLast() const;
+
+    QString toQString() const;
 };
 
 const GridPosition INVALID_POSITION = GridPosition(Grid(0, 0), -1, -1, -1);

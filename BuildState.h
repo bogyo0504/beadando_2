@@ -8,6 +8,9 @@
 #include "Stock.h"
 #include "GridPosition.h"
 
+enum BuildStatus {
+    ERROR, READY, IN_PROGRESS, TRY_NEXT, OUT_OF_STOCK
+};
 
 //Adott pozícióban az adott stockból kell rakni, illetve jelöljük, ha készen van a puzzle
 
@@ -15,11 +18,11 @@ class BuildState {
 private:
     GridPosition position;
     Stock stock;
-    bool isReady;
+    BuildStatus status;
     Tile currentTile;
     Rotation rotation;
 public:
-    BuildState(const GridPosition &position, const Stock &stock, const bool isReady, const Tile currentTile, Rotation rotation);
+    BuildState(const GridPosition &position, const Stock &stock, BuildStatus status, const Tile currentTile, Rotation rotation);
 
     Rotation getRotation() const;
 
@@ -31,7 +34,7 @@ public:
 
     const Stock &getStock() const;
 
-    const bool getIsReady() const;
+    BuildStatus getStatus() const;
 
     const Tile &getCurrentTile() const;
 

@@ -7,8 +7,14 @@
 #include "PipeLineValidator.h"
 
 class PipeLineBuilder {
-    PipeLineValidator validator;
+    PipeLineValidator &validator;
+    PipeLine &pipeline;
 
+public:
+    PipeLineBuilder(PipeLineValidator &validator, PipeLine &pipeline);
+    bool build(const Stock &stock);
+
+    BuildState buildPipeLine(BuildState state);
 };
 
 

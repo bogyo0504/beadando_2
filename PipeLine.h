@@ -52,10 +52,12 @@ public:
     QList<GridPosition> getValvePositions() const;
 
 
-    QString toQString() const;
+    QString toQString(bool prefix = false) const;
 
     static PipeLine fromString(const QString &string);
 
+
+    QPair<bool, BuildState> stepBack();
 
 private:
     static QString typeAndColorToChar(Tile tile, bool hasRightItem);

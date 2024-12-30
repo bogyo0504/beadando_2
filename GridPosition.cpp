@@ -122,5 +122,9 @@ bool GridPosition::isLast() const {
     return stack == 1 && horizontal == grid.getWidth() - 1 && vertical == grid.getHeight() - 1;
 }
 
+QString GridPosition::toQString() const {
+    return QString::number(stack) + " " + QString::number(horizontal) + " " + QString::number(vertical);
+}
+
 
 

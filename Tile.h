@@ -5,6 +5,8 @@
 #ifndef BEADANDO_II_TILE_H
 #define BEADANDO_II_TILE_H
 
+#include <QString>
+
 #define ROTATION_MASK 3
 typedef short int Rotation;
 
@@ -74,6 +76,8 @@ public:
     bool isPostIt() const;
 
     Tile rotate(Rotation rotation) const;
+
+    static Tile fromString(const QString &string);
 };
 
 

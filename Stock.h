@@ -43,6 +43,8 @@ public:
      */
     bool contains(const Tile &tile) const;
 
+    static Stock fromString(const QString &string);
+
 };
 
 

@@ -52,3 +52,39 @@ bool Stock::contains(const Tile &tile) const {
 }
 
 Stock::Stock() : stock(){}
+
+
+/*
+ * Stock definition is:
+ * -every line is a stock element
+ * -line contains a number and a tile with a space separator
+ */
+Stock Stock::fromString(const QString &string) {
+    QMap<Tile, int> stock;
+    QStringList lines = string.split("\n");
+    for (const QString &line: lines) {
+        if (line == "") {
+            continue;
+        }
+        QStringList parts = line.split(" ");
+        if (parts.size() < 2) {
+            throw std::invalid_argument("Invalid string: " + string.toStdString());
+        }
+        bool ok;
+        int number = parts[0].toInt(&ok);
+        if (!ok) {
+            throw std::invalid_argument("Invalid string: " + string.toStdString());
+        }
+        QString tileString = "";
+        for (int i = 1; i < parts.size(); i++) {
+            tileString += parts[i];
+            if (i != parts.size() - 1) {
+                tileString += " ";
+            }
+        }
+        Tile tile = Tile::fromString(tileString);
+        stock[tile] = number;
+    }
+    return Stock(stock);
+
+}

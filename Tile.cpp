@@ -84,5 +84,56 @@ Tile Tile::rotate(Rotation rotation) const {
     return Tile(newConnections, type, color);
 }
 
+Tile Tile::fromString(const QString &string) {
+    TileType type = NORMAL;
+    TileColor color = NONE;
+    if (string.size() < 5) {
+        throw std::invalid_argument("Invalid string: " + string.toStdString());
+    }
+    int connections = 0;
+    if (string[0] == '-') {
+        connections |= CSP_LEFT;
+    }
+    if (string[1] == '|') {
+        connections |= CSP_TOP;
+        connections |= CSP_BOTTOM;
+    }
+    if (string[1] == '.') {
+        connections |= CSP_BOTTOM;
+    }
+    if (string[1] == '\'') {
+        connections |= CSP_TOP;
+    }
+    if (string[2] == '-') {
+        connections |= CSP_RIGHT;
+    }
+    if (string[3] == 'o') {
+        type = SOURCE;
+    }
+    if (string[3] == 'c') {
+        type = SINK;
+    }
+    if (string[3] == '0') {
+        type = VALVE;
+    }
+    if (string[4] == 'R') {
+        color = RED;
+    }
+    if (string[4] == 'C') {
+        color = CIAN;
+    }
+    if (string[4] == 'B') {
+        color = BLUE;
+    }
+    if (string[4] == 'G') {
+        color = GREEN;
+    }
+    if (string[4] == 'Y') {
+        color = YELLOW;
+    }
+    Tile tile = Tile(connections, type, color);
+    return tile;
+}
+
 
 
