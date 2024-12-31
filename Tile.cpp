@@ -57,7 +57,11 @@ bool Tile::operator<(const Tile &rhs) const {
         return true;
     if (rhs.connections < connections)
         return false;
-    return type < rhs.type;
+    if (type < rhs.type)
+        return true;
+    if (rhs.type < type)
+        return false;
+    return color < rhs.color;
 }
 
 bool Tile::operator>(const Tile &rhs) const {
@@ -142,10 +146,10 @@ Tile Tile::fromString(const QString &string) {
 }
 
 Rotation Tile::getMaxPossibleRotation() const {
-    if(connections == 5 || connections == 10){
+    if (connections == 5 || connections == 10) {
         return 2;
     }
-    if(connections == 0){
+    if (connections == 0) {
         return 1;
     }
     return 4; // a forgatások száma a használatánál levonunk blőle 1-et, mert 0-tól indexelünk :)
