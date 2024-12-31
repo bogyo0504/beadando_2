@@ -4,10 +4,20 @@
 #include "PipeLine.h"
 
 bool PipeLine::canPut(const GridPosition position, const Tile &tile) const {
-    if (tile.isPostIt()) {
-        return true;
+    if (!overlappingEnabled && position.getStack() == 1) {
+        return false;
     }
-    const Tile other = (*this)[position.step(OTHER_STACK)];
+    const GridPosition &otherPosition = position.step(OTHER_STACK);
+    if (tile.isPostIt()) {
+        if(tiles.contains(otherPosition)){
+            return hasValidNeighbourghs(position, tile);
+        }
+        return position.getStack() == 0;
+    }
+    if (!tiles.contains(otherPosition) && position.getStack() == 1) {
+        return false;
+    }
+    const Tile other = (*this)[otherPosition];
 
     if (tile.isCorner()) {
         if (!other.isPostIt()) {
@@ -32,7 +42,7 @@ bool PipeLine::canPut(const GridPosition position, const Tile &tile) const {
         }
         //Minden más csak PostIt-re rakható rá
     }
-    return true;
+    return hasValidNeighbourghs(position, tile);
 
     //A többi esetben a Tile-t rá lehet rakni a megadott pozícióra
 }
@@ -106,7 +116,7 @@ BuildState PipeLine::addElementFromStock(const BuildState &state) {
     GridPosition currentPosition = state.getPosition();
 
     if (!isEmpty(currentPosition)) {
-        while (!isEmpty(currentPosition)) {
+        while (!isEmptyAndAvailable(currentPosition)) {
             currentPosition = ++currentPosition;
             if (currentPosition == INVALID_POSITION) {
                 return {INVALID_POSITION, state.getStock(), READY, PostIt, 0};
@@ -123,26 +133,34 @@ BuildState PipeLine::addElementFromStock(const BuildState &state) {
         Stock newStock = state.getStock() - state.getCurrentTile();
 
 
-        if (state.getStatus() == TRY_NEXT || !canPut(currentPosition, state.getCurrentTile().rotate(state.getRotation()))) {
-            if (state.getRotation() == 3 || state.getCurrentTile() == PostIt) {
-                Tile newTile = state.getStock().getNextTile(state.getCurrentTile());
+        const Tile &rotatedTile = state.getCurrentTile().rotate(state.getRotation());
+        if (state.getStatus() == TRY_NEXT || !canPut(currentPosition, rotatedTile)) {
+            if (state.getRotation() >= state.getCurrentTile().getMaxPossibleRotation() - 1) {
+                Tile currentTile = state.getCurrentTile();
+                while (true) {
+                Tile newTile = state.getStock().getNextTile(currentTile);
 
                 if (newTile == PostIt) {
                     return {INVALID_POSITION, state.getStock(), OUT_OF_STOCK, PostIt, 0};
                 } else {
-                    return {currentPosition, state.getStock(), IN_PROGRESS, newTile, 0};
+                    const Rotation rotation = findRotation(currentPosition, newTile);
+                    if (rotation != INVALID_ROTATION)  {
+                        return {currentPosition, state.getStock(), IN_PROGRESS, newTile, rotation};
+                    }
                 }
+                currentTile = newTile;
+            }
             } else {
                 return {currentPosition, state.getStock(), IN_PROGRESS, state.getCurrentTile(), (Rotation) (state.getRotation() + 1)};
             }
         } else {
-            put(currentPosition, state.getCurrentTile().rotate(state.getRotation()));
+            put(currentPosition, rotatedTile);
             states.push(std::make_shared<BuildState>(BuildState(currentPosition, state.getStock(), IN_PROGRESS, state.getCurrentTile(), state.getRotation())));
             return {++currentPosition, newStock, IN_PROGRESS, PostIt, 0};
         }
 
     } else {
-        Tile newTile = state.getStock().getNextTile(state.getCurrentTile());
+        const Tile &newTile = state.getStock().getNextTile(state.getCurrentTile());
         if (newTile == PostIt) {
             return {INVALID_POSITION, state.getStock(), OUT_OF_STOCK, PostIt, 0};
         } else {
@@ -162,9 +180,10 @@ BuildState PipeLine::addElementFromStock(const BuildState &state) {
 //Egyébként az új állapotot adja vissza a következő csempével.
 
 PipeLine &PipeLine::put(const GridPosition position, const Tile &tile) {
-    if (canPut(position, tile)) {
+   // if (canPut(position, tile)) {
         tiles[position] = tile;
-    }
+        
+   // }
     return *this;
 }
 
@@ -215,14 +234,22 @@ QString PipeLine::toQString(bool prefix) const {
         for (int j = 0; j < grid.getWidth(); j++) {
             GridPosition currentPosition = GridPosition(grid, 0, j, i);
             Tile currentTile =  (*this)[currentPosition];
-            Tile otherTile =  (*this)[currentPosition.step(OTHER_STACK)];
+            const GridPosition &otherPosition = currentPosition.step(OTHER_STACK);
+            Tile otherTile =  (*this)[otherPosition];
             if (currentTile.isPostIt()) {
                 Tile changedTile = otherTile;
                 otherTile = currentTile;
                 currentTile = changedTile;
             }
             if (currentTile.isPostIt()) {
-                result += "     ";
+                if (tiles.contains(currentPosition) && tiles[currentPosition] == PostIt) {
+                    result += "*****";
+                } else if (tiles.contains(otherPosition) && tiles[otherPosition] == PostIt) {
+                    result += "#####";
+                } else {
+                    result += "     ";
+                }
+                
             } else {
                 if (currentTile.isCorner() && otherTile.isCorner()) {
                     result += "-:-" + typeAndColorToChar(currentTile, true);
@@ -307,7 +334,7 @@ QString PipeLine::typeAndColorToChar(Tile tile, bool hasRightItem) {
 }
 
 PipeLine PipeLine::fromString(const QString &string) {
-    QMap<GridPosition, Tile> tiles;
+    QHash<GridPosition, Tile> tiles;
     QStringList AllLines = string.split("\n");
     QStringList lines;
 
@@ -387,4 +414,75 @@ QPair<bool, BuildState> PipeLine::stepBack() {
     clear(state.getPosition());
     return {true, state};
 }
+
+bool PipeLine::isEmptyAndAvailable(GridPosition position) {
+    if(!isEmpty(position)) {
+        return false;
+    }
+    const GridPosition &otherPosition = position.step(OTHER_STACK);
+    if(!tiles.contains(otherPosition)) {
+        return true;
+    }
+    const Tile &otherTile = tiles[otherPosition];
+    if(otherTile.isCorner() && otherTile.getType() == NORMAL) {
+        return true;
+    }
+    return false;
+}
+
+Rotation PipeLine::findRotation(GridPosition position, Tile tile) const {
+    for (int i = 0; i < tile.getMaxPossibleRotation(); ++i) {
+        if (canPut(position, tile)) {
+            return (Rotation) i;
+        }
+        tile = tile.rotate(1);
+    }
+    return INVALID_ROTATION;
+}
+
+void PipeLine::disableOverlap() {
+    overlappingEnabled = false;
+}
+
+bool PipeLine::hasValidNeighbourghs(const GridPosition &position, const Tile &tile) const {
+    return hasValidNeighbourgh(position, tile, UP, CSP_TOP, CSP_BOTTOM) &&
+           hasValidNeighbourgh(position, tile, DOWN, CSP_BOTTOM, CSP_TOP) &&
+           hasValidNeighbourgh(position, tile, LEFT, CSP_LEFT, CSP_RIGHT) &&
+           hasValidNeighbourgh(position, tile, RIGHT, CSP_RIGHT, CSP_LEFT);
+}
+
+bool PipeLine::hasValidNeighbourgh(const GridPosition &position, const Tile &tile, GridPositionStep step,
+                                   int selfConnectionMask, int otherConnectionMask) const {
+    if (tile.isPostIt()) {
+        return true;
+    }
+    const GridPosition &otherPosition = position.step(step);
+    const GridPosition &otherStackOtherPosition = otherPosition.step(OTHER_STACK);
+    bool myConnection = tile.hasConnectionInDirection(selfConnectionMask);
+    if(otherPosition == INVALID_POSITION || otherStackOtherPosition == INVALID_POSITION) {
+        return !myConnection;
+    }
+    if (!tiles.contains(otherPosition) && !tiles.contains(otherStackOtherPosition)) {
+        return true;
+    }
+    const Tile &otherTile = (*this)[otherPosition];
+    const Tile &otherStackOtherTile = (*this)[otherStackOtherPosition];
+    bool otherConnection = otherTile.hasConnectionInDirection(otherConnectionMask);
+    bool otherStackOtherConnection = otherStackOtherTile.hasConnectionInDirection(otherConnectionMask);
+    if(myConnection) {
+        if(otherConnection || otherStackOtherConnection) {
+            return true;
+        }
+        return false;
+    }
+    if (tile.isCorner()) {
+        const GridPosition &pairPosition = position.step(OTHER_STACK);
+        const Tile &pairTile = (*this)[pairPosition];
+        if (pairTile.isCorner() || pairTile.isPostIt()) {
+            return true;
+        }
+    }
+    return !otherConnection && !otherStackOtherConnection;
+}
+
 

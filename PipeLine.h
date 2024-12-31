@@ -15,12 +15,14 @@
 #include "Stock.h"
 #include "BuildState.h"
 #include <memory>
+#include <QHash>
 
 class PipeLine {
 private:
     const Grid grid;
-    QMap<GridPosition, Tile> tiles;
+    QHash<GridPosition, Tile> tiles;
     QStack<std::shared_ptr<BuildState>> states;
+    bool overlappingEnabled = true;
 public:
 
     const Grid &getGrid() const;
@@ -59,8 +61,20 @@ public:
 
     QPair<bool, BuildState> stepBack();
 
+    void disableOverlap();
+
 private:
     static QString typeAndColorToChar(Tile tile, bool hasRightItem);
+
+    bool isEmptyAndAvailable(GridPosition position);
+
+    Rotation findRotation(GridPosition position, Tile tile) const;
+
+    bool hasValidNeighbourghs(const GridPosition &position, const Tile &tile) const;
+
+    bool
+    hasValidNeighbourgh(const GridPosition &position, const Tile &tile, GridPositionStep step, int selfConnectionMask,
+                        int otherConnectionMask) const;
 };
 
 

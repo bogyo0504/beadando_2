@@ -6,8 +6,10 @@
 #define BEADANDO_II_TILE_H
 
 #include <QString>
+#include "GridPosition.h"
 
 #define ROTATION_MASK 3
+#define INVALID_ROTATION (-1)
 typedef short int Rotation;
 
 #define CSP_TOP 8
@@ -78,6 +80,12 @@ public:
     Tile rotate(Rotation rotation) const;
 
     static Tile fromString(const QString &string);
+
+    Rotation getMaxPossibleRotation() const;
+
+    bool hasConnectionInDirection(int direction) const;
+
+    bool hasConnentionInStep(GridPositionStep step) const;
 };
 
 

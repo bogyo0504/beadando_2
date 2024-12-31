@@ -266,7 +266,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 2x3-as tesztpéldán") {
 }
 
 
-TEST_CASE("Teszteljük a PipeLineBuilder funkciót 3x3-as tesztpéldán") {
+TEST_CASE("Teszteljük a PipeLineBuilder funkciót 3x3-as tesztpéldán 2") {
     PipeLine pipeline = PipeLine::fromString(""
                                              "  -oG          \n"
                                              "               \n"
@@ -287,10 +287,11 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 3x3-as tesztpéldán, szelepp
                                              "  -oG          \n"
                                              "               \n"
                                              "          -  cG\n");
+    std::cout << pipeline.toQString(true).toStdString();
     Stock stock = Stock::fromString(""
                                     "2 -'   \n"
                                     "1 ---0 \n");
-    Phase phase = Phase({GREEN});
+    Phase phase = Phase(GREEN);
     FlowValidator validator({phase});
     PipeLineBuilder pipeLineBuilder(validator, pipeline);
     CHECK(pipeLineBuilder.build(stock));
@@ -325,7 +326,7 @@ TEST_CASE("Validáljuk 3x3-as tesztpéldát") {
 }
 
 
-TEST_CASE("Teszteljük a PipeLineBuilder funkciót 3x3-as tesztpéldán") {
+TEST_CASE("Teszteljük a PipeLineBuilder funkciót 3x3-as tesztpéldán 1") {
     PipeLine pipeline = PipeLine::fromString(""
                                              "  -oG     -  cB\n"
                                              "               \n"
@@ -367,6 +368,99 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 3x3-as tesztpéldán, egyesí
     Phase phaseBlue = Phase({BLUE});
     FlowValidator validator({phaseGreen, phaseBlue});
     PipeLineBuilder pipeLineBuilder(validator, pipeline);
+    validator.debug();
+    pipeLineBuilder.debug();
+    CHECK(pipeLineBuilder.build(stock));
+    std::cout << pipeline.toQString(true).toStdString();
+}
+
+
+TEST_CASE("Teszteljük a PipeLineBuilder funkciót 6x3-as tesztpéldán") {
+    PipeLine pipeline = PipeLine::fromString(""
+                                             "  -oG                    -  cG\n"
+                                             "                              \n"
+                                             "  -oB                    -  cB\n");
+    Stock stock = Stock::fromString(""
+                                    "4 -'   \n"
+                                    "2 -'-  \n"
+                                    "4 ---0 \n");
+    Phase phaseGreen = Phase({GREEN, BLUE});
+    Phase phaseBlue = Phase({BLUE});
+    FlowValidator validator({phaseGreen, phaseBlue});
+    PipeLineBuilder pipeLineBuilder(validator, pipeline);
+    CHECK(pipeLineBuilder.build(stock));
+    std::cout << pipeline.toQString(true).toStdString();
+}
+
+TEST_CASE("Teszteljük a PipeLineBuilder funkciót 4x3-as tesztpéldán") {
+    PipeLine pipeline = PipeLine::fromString(""
+                                             "  -oG          -  cB\n"
+                                             "                    \n"
+                                             "  -oB          -  cG\n");
+    pipeline.disableOverlap();
+    Stock stock = Stock::fromString(""
+                                    "4 -'   \n"
+                                    "2 -'-  \n");
+    Phase phaseGreen = Phase({GREEN});
+    Phase phaseBlue = Phase({BLUE});
+    FlowValidator validator({phaseGreen
+                             , phaseBlue
+                             });
+    PipeLineBuilder pipeLineBuilder(validator, pipeline);
+   // pipeLineBuilder.printPosition(GridPosition(pipeline.getGrid(), -1, 0, 1));
+  // pipeLineBuilder.debug();
+  // validator.debug();
+    CHECK(pipeLineBuilder.build(stock));
+    std::cout << pipeline.toQString(true).toStdString();
+}
+
+
+TEST_CASE("Teszteljük a PipeLineBuilder funkciót 5x3-as tesztpéldán, csappal") {
+    PipeLine pipeline = PipeLine::fromString(""
+                                             "  -oG               -  cG\n"
+                                             "                         \n"
+                                             "  -oB               -  cB\n");
+    pipeline.disableOverlap();
+    Stock stock = Stock::fromString(""
+                                    "4 ---  \n"
+                                    "3 -'-  \n"
+                                    "1 -'   \n"
+                                    "1 -'-0 \n");
+    Phase phaseGreen = Phase({GREEN, BLUE});
+    Phase phaseBlue = Phase({BLUE});
+    FlowValidator validator({phaseGreen
+                                    , phaseBlue
+                            });
+    PipeLineBuilder pipeLineBuilder(validator, pipeline);
+    // pipeLineBuilder.printPosition(GridPosition(pipeline.getGrid(), -1, 0, 1));
+    // pipeLineBuilder.debug();
+    // validator.debug();
+    CHECK(pipeLineBuilder.build(stock));
+    std::cout << pipeline.toQString(true).toStdString();
+}
+
+
+TEST_CASE("Teszteljük a PipeLineBuilder funkciót 5x5-as tesztpéldán, csappal") {
+    PipeLine pipeline = PipeLine::fromString(""
+                                             "      . oB               \n"
+                                             "  -oG          -  cB     \n"
+                                             "                         \n"
+                                             "     -.-oY          -  cG\n"
+                                             "                ' cY     \n");
+    pipeline.disableOverlap();
+    Stock stock = Stock::fromString(""
+                                    "1 ---0 \n"
+                                    "12 -'   \n"
+                                    "5 -'-  \n");
+    Phase phaseGreen = Phase({GREEN});
+    Phase phaseBlue = Phase({YELLOW, BLUE});
+    FlowValidator validator({phaseGreen
+                                    , phaseBlue
+                            });
+    PipeLineBuilder pipeLineBuilder(validator, pipeline);
+    // pipeLineBuilder.printPosition(GridPosition(pipeline.getGrid(), -1, 0, 1));
+    // pipeLineBuilder.debug();
+    // validator.debug();
     CHECK(pipeLineBuilder.build(stock));
     std::cout << pipeline.toQString(true).toStdString();
 }

@@ -47,6 +47,12 @@ bool Tile::operator!=(const Tile &rhs) const {
 }
 
 bool Tile::operator<(const Tile &rhs) const {
+    if (isCorner() && !rhs.isCorner()) {
+        return false;
+    }
+    if (!isCorner() && rhs.isCorner()) {
+        return true;
+    }
     if (connections < rhs.connections)
         return true;
     if (rhs.connections < connections)
@@ -133,6 +139,36 @@ Tile Tile::fromString(const QString &string) {
     }
     Tile tile = Tile(connections, type, color);
     return tile;
+}
+
+Rotation Tile::getMaxPossibleRotation() const {
+    if(connections == 5 || connections == 10){
+        return 2;
+    }
+    if(connections == 0){
+        return 1;
+    }
+    return 4; // a forgatások száma a használatánál levonunk blőle 1-et, mert 0-tól indexelünk :)
+}
+
+bool Tile::hasConnectionInDirection(int direction) const {
+    return (connections & direction) != 0;
+}
+
+bool Tile::hasConnentionInStep(GridPositionStep step) const {
+    switch (step) {
+        case UP:
+            return hasConnectionInDirection(CSP_TOP);
+        case DOWN:
+            return hasConnectionInDirection(CSP_BOTTOM);
+        case LEFT:
+            return hasConnectionInDirection(CSP_LEFT);
+        case RIGHT:
+            return hasConnectionInDirection(CSP_RIGHT);
+        default:
+            return false;
+
+    }
 }
 
 

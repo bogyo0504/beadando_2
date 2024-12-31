@@ -7,6 +7,8 @@
 
 #include <QString>
 #include "Grid.h"
+#include "QHash"
+
 enum GridPositionStep {
     OTHER_STACK, UP, DOWN, LEFT, RIGHT
 };
@@ -54,7 +56,13 @@ public:
     bool isLast() const;
 
     QString toQString() const;
+
+    bool covers(const GridPosition &position) const;
 };
 
 const GridPosition INVALID_POSITION = GridPosition(Grid(0, 0), -1, -1, -1);
+
+size_t qHash(GridPosition key, size_t seed = 0);
+
 #endif //BEADANDO_II_GRIDPOSITION_H
+

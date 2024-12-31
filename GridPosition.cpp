@@ -35,15 +35,15 @@ bool GridPosition::operator!=(const GridPosition &rhs) const {
 }
 
 bool GridPosition::operator<(const GridPosition &rhs) const {
+    if (stack < rhs.stack)
+        return true;
+    if (rhs.stack < stack)
+        return false;
     if (vertical < rhs.vertical)
         return true;
     if (rhs.vertical < vertical)
         return false;
-    if (horizontal < rhs.horizontal)
-        return true;
-    if (rhs.horizontal < horizontal)
-        return false;
-    return stack < rhs.stack;
+    return horizontal < rhs.horizontal;
 }
 
 bool GridPosition::operator>(const GridPosition &rhs) const {
@@ -62,14 +62,14 @@ GridPosition GridPosition::operator++() const {
     if (stack < 0 || horizontal < 0 || vertical < 0 || stack > 1) {
         return INVALID_POSITION;
     }
-    if (stack == 0) {
-        return {grid, 1, horizontal, vertical}; // GridPosition(grid, 1, horizontal, vertical);
-    }
     if (horizontal < grid.getWidth() - 1) {
-        return {grid, 0, horizontal + 1, vertical};
+        return {grid, stack, horizontal + 1, vertical};
     }
     if (vertical < grid.getHeight() - 1) {
-        return {grid, 0, 0, vertical + 1};
+        return {grid, stack, 0, vertical + 1};
+    }
+    if (stack == 0) {
+        return {grid, 1, 0, 0};
     }
     return INVALID_POSITION;
 }
@@ -78,14 +78,14 @@ GridPosition GridPosition::operator--() const {
     if (stack < 0 || horizontal < 0 || vertical < 0 || stack > 1 || horizontal >= grid.getWidth() || vertical >= grid.getHeight()) {
         return INVALID_POSITION;
     }
-    if (stack == 1) {
-        return {grid, 0, horizontal, vertical};
-    }
     if (horizontal > 0) {
-        return {grid, 1, horizontal - 1, vertical};
+        return {grid, stack, horizontal - 1, vertical};
     }
     if (vertical > 0) {
-        return {grid, 1, grid.getWidth() - 1, vertical - 1};
+        return {grid, stack, grid.getWidth() - 1, vertical - 1};
+    }
+    if (stack == 1) {
+        return {grid, 0, grid.getWidth() - 1, grid.getHeight() - 1};
     }
     return INVALID_POSITION;
 }
@@ -126,5 +126,11 @@ QString GridPosition::toQString() const {
     return QString::number(stack) + " " + QString::number(horizontal) + " " + QString::number(vertical);
 }
 
+bool GridPosition::covers(const GridPosition &position) const {
+    return (stack == position.stack || stack == -1) && (horizontal == position.horizontal || horizontal == -1) && vertical == position.vertical;
+}
 
 
+size_t qHash(GridPosition key, size_t seed) {
+    return qHash(key.getStack(), seed) ^ qHash(key.getHorizontal(), seed) ^ qHash(key.getVertical(), seed);
+}

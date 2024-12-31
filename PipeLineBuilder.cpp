@@ -9,7 +9,7 @@ PipeLineBuilder::PipeLineBuilder(PipeLineValidator &validator, PipeLine &pipelin
                                                                                      pipeline(pipeline) {}
 
 bool PipeLineBuilder::build(const Stock &stock) {
-    BuildState currentState = BuildState(GridPosition(pipeline.getGrid(),0,0,0), stock, IN_PROGRESS, PostIt, 0);
+    BuildState currentState = BuildState(GridPosition(pipeline.getGrid(), 0, 0, 0), stock, IN_PROGRESS, PostIt, 0);
     while (true) {
         currentState = buildPipeLine(currentState);
         if (currentState.getStatus() == ERROR) {
@@ -27,10 +27,24 @@ bool PipeLineBuilder::build(const Stock &stock) {
             currentState = BuildState(currentState.getPosition(), currentState.getStock(), TRY_NEXT,
                                       currentState.getCurrentTile(), currentState.getRotation());
             currentState = pipeline.addElementFromStock(currentState);
-            if (currentState.getStatus() != OUT_OF_STOCK){
+            if (currentState.getStatus() != OUT_OF_STOCK) {
+                if (debugging || debugPosition.covers(successAndCurrentState.second.getPosition())) {
+                    if (currentState.getStatus() == IN_PROGRESS) {
+                        std::cout << "Step back to " << successAndCurrentState.second.getPosition().toQString().toStdString() << std::endl;
+                        std::cout << "Putting: " << currentState.getPosition().toQString().toStdString() << " "
+                                  << currentState.getCurrentTile().getConnections()
+                                  << " " << currentState.getCurrentTile().getType() << " " << currentState.getRotation()
+                                  << std::endl;
+                    } else {
+                        std::cout << "Putting: " << currentState.getStatus();
+                    }
+                }
                 break;
             }
-           // std::cout << "Out of stock at " << successAndCurrentState.second.getPosition().toQString().toStdString() << std::endl;
+            if (debugging) {
+                std::cout << "Out of stock at " << successAndCurrentState.second.getPosition().toQString().toStdString()
+                          << std::endl;
+            }
         }
     }
 }
@@ -40,4 +54,12 @@ BuildState PipeLineBuilder::buildPipeLine(BuildState state) {
         state = pipeline.addElementFromStock(state);
     }
     return state;
+}
+
+void PipeLineBuilder::debug() {
+    debugging = true;
+}
+
+void PipeLineBuilder::printPosition(GridPosition position) {
+    debugPosition = position;
 }

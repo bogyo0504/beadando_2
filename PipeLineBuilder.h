@@ -9,12 +9,18 @@
 class PipeLineBuilder {
     PipeLineValidator &validator;
     PipeLine &pipeline;
-
+    bool debugging = false;
+    GridPosition debugPosition = INVALID_POSITION;
 public:
     PipeLineBuilder(PipeLineValidator &validator, PipeLine &pipeline);
     bool build(const Stock &stock);
 
     BuildState buildPipeLine(BuildState state);
+
+    void debug();
+
+    void printPosition(GridPosition position);
+
 };
 
 

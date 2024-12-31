@@ -12,7 +12,9 @@ bool PipeLineValidator::validate(const PipeLine &pipeLine) {
 FlowValidator::FlowValidator(const QList<Phase> &phases) : phases(phases) {}
 
 bool FlowValidator::validate(const PipeLine &pipeLine) {
-//    std::cout << "Validating pipeline\n" << pipeLine.toQString().toStdString() << std::endl;
+    if (debugging) {
+        std::cout << "Validating pipeline\n" << pipeLine.toQString(true).toStdString() << std::endl;
+    }
     for (const Phase &phase: phases) {
         Flow flow;
         if (!flow.makeFlow(pipeLine, phase)) {
@@ -20,4 +22,8 @@ bool FlowValidator::validate(const PipeLine &pipeLine) {
         }
     }
     return true;
+}
+
+void FlowValidator::debug() {
+    debugging = true;
 }

@@ -17,9 +17,12 @@ public:
 
 class FlowValidator : public PipeLineValidator {
     QList<Phase> phases;
+    bool debugging = false;
 public:
     explicit FlowValidator(const QList<Phase> &phases);
 
     bool validate(const PipeLine &pipeLine) override;
+
+    void debug();
 };
 #endif //BEADANDO_II_PIPELINEVALIDATOR_H

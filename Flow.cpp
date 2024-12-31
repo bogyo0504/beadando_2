@@ -35,7 +35,9 @@ bool Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfi
         while (!flow.isEmpty()) {
             GridPosition current = flow.dequeue();
             for (GridPositionStep step: {UP, DOWN, LEFT, RIGHT}) {
+                bool hasNoConnection = true;
                 if (pipeLine.checkConnection(current, step, false)) {
+                    hasNoConnection = false;
                     const GridPosition &newPosition = current.step(step);
                     if (positions.contains(newPosition) && positions[newPosition] != NONE) {
                         if (positions[newPosition] == color) {
@@ -52,6 +54,7 @@ bool Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfi
                     flow.enqueue(newPosition);
                 }
                 if (pipeLine.checkConnection(current, step, true)) {
+                    hasNoConnection = false;
                     const GridPosition &newPosition = current.step(step).step(OTHER_STACK);
                     if (positions.contains(newPosition) && positions[newPosition] != NONE) {
                         if (positions[newPosition] == color) {
@@ -66,6 +69,11 @@ bool Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfi
                     }
                     positions[newPosition] = color;
                     flow.enqueue(newPosition);
+                }
+                if (hasNoConnection) {
+                    if (pipeLine[current].hasConnentionInStep(step)) {
+                        return false;
+                    }
                 }
             }
         }
