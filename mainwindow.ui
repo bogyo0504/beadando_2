@@ -6,16 +6,360 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>902</width>
+    <height>582</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
-  <widget class="QMenuBar" name="menubar"/>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QSplitter" name="splitter_6">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>12</y>
+      <width>886</width>
+      <height>170</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <widget class="QTableWidget" name="stock">
+     <attribute name="horizontalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="horizontalHeaderMinimumSectionSize">
+      <number>30</number>
+     </attribute>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>100</number>
+     </attribute>
+     <attribute name="verticalHeaderMinimumSectionSize">
+      <number>24</number>
+     </attribute>
+     <attribute name="verticalHeaderDefaultSectionSize">
+      <number>100</number>
+     </attribute>
+     <row>
+      <property name="text">
+       <string>Típus</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Darabszám</string>
+      </property>
+     </row>
+    </widget>
+    <widget class="QSplitter" name="splitter_4">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QSplitter" name="splitter_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Alak:</string>
+          </property>
+          <property name="buddy">
+           <cstring>comboBox</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="comboBox">
+          <item>
+           <property name="text">
+            <string/>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Egyenes</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Kanyar</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>T-kanyar</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Kereszt</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Zsákutca</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Típus:</string>
+          </property>
+          <property name="buddy">
+           <cstring>comboBox_2</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="comboBox_2">
+          <item>
+           <property name="text">
+            <string>Sima</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Forrás</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Csap</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Fogyasztó</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Szín:</string>
+          </property>
+          <property name="buddy">
+           <cstring>comboBox_3</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="comboBox_3">
+          <item>
+           <property name="text">
+            <string>Nincs</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Cián</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Kék</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sárga</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Zöld</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Piros</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QLabel" name="preview">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QSplitter" name="splitter_3">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <widget class="QPushButton" name="start">
+       <property name="text">
+        <string>Indítás</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="rotate">
+       <property name="text">
+        <string>Forgatás</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="addtostock">
+       <property name="text">
+        <string>Hozzáadás a készlethez</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="addtogrid">
+       <property name="text">
+        <string>Hozzáadás a pályához</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="delfromstock">
+       <property name="text">
+        <string>Törlés a készletből</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="delfromgrid">
+       <property name="text">
+        <string>Törlés a pályáról</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QListWidget" name="listWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>385</y>
+      <width>886</width>
+      <height>160</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QSplitter" name="splitter">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>188</y>
+      <width>886</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>Pálya szélessége:</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="width">
+     <property name="minimum">
+      <number>2</number>
+     </property>
+     <property name="maximum">
+      <number>20</number>
+     </property>
+     <property name="singleStep">
+      <number>1</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Pálya magassága:</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="height">
+     <property name="minimum">
+      <number>2</number>
+     </property>
+     <property name="maximum">
+      <number>20</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Y pozíció:</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="ypos">
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>2</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>X pozíció:</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="xpos">
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>2</number>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGraphicsView" name="pipeline">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>220</y>
+      <width>886</width>
+      <height>159</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>902</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuMen">
+    <property name="title">
+     <string>Menü</string>
+    </property>
+    <addaction name="actionP_lya_bet_lt_se"/>
+    <addaction name="actionMent_s"/>
+    <addaction name="actionBet_lt_s"/>
+    <addaction name="actionKil_p_s"/>
+   </widget>
+   <addaction name="menuMen"/>
+  </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionBet_lt_s">
+   <property name="text">
+    <string>Betöltés</string>
+   </property>
+  </action>
+  <action name="actionMent_s">
+   <property name="text">
+    <string>Mentés</string>
+   </property>
+  </action>
+  <action name="actionP_lya_bet_lt_se">
+   <property name="text">
+    <string>Új</string>
+   </property>
+  </action>
+  <action name="actionKil_p_s">
+   <property name="text">
+    <string>Kilépés</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

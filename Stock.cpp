@@ -88,3 +88,7 @@ Stock Stock::fromString(const QString &string) {
     return Stock(stock);
 
 }
+
+QMap<Tile, int> Stock::enumStock() const {
+    return stock;
+}
