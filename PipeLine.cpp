@@ -252,40 +252,9 @@ QString PipeLine::toQString(bool prefix) const {
                 
             } else {
                 if (currentTile.isCorner() && otherTile.isCorner()) {
-                    result += "-:-" + typeAndColorToChar(currentTile, true);
+                    result += "-:-" + currentTile.typeAndColorToChar(true);
                 } else {
-                    int leftSide = currentTile.getConnections() & CSP_LEFT;
-                    int rightSide = currentTile.getConnections() & CSP_RIGHT;
-                    int topSide = currentTile.getConnections() & CSP_TOP;
-                    int bottomSide = currentTile.getConnections() & CSP_BOTTOM;
-                    if (leftSide != 0) {
-                        result += "-";
-                    } else {
-                        result += " ";
-                    }
-                    if (topSide != 0) {
-                        if (bottomSide != 0) {
-                            result += "|";
-                        } else {
-                            result += "'";
-                        }
-                    } else {
-                        if (bottomSide != 0) {
-                            result += ".";
-                        } else {
-                            if (leftSide != 0 && rightSide != 0) {
-                                result += "-";
-                            } else {
-                                result += " ";
-                            }
-                        }
-                    }
-                    if (rightSide != 0) {
-                        result += "-";
-                    } else {
-                        result += " ";
-                    }
-                    result += typeAndColorToChar(currentTile, rightSide != 0);
+                    result += currentTile.toQString();
                 }
             }
         }
@@ -294,44 +263,6 @@ QString PipeLine::toQString(bool prefix) const {
     return result;
 }
 
-QString PipeLine::typeAndColorToChar(Tile tile, bool hasRightItem) {
-    QString result;
-    switch (tile.getType()) {
-        case NORMAL:
-            result += hasRightItem ? "-" : " ";
-            break;
-        case SOURCE:
-            result += "o";
-            break;
-        case SINK:
-            result += "c";
-            break;
-        case VALVE:
-            result += "0";
-            break;
-    }
-    switch (tile.getColor()) {
-        case RED:
-            result += "R";
-            break;
-        case CIAN:
-            result += "C";
-            break;
-        case BLUE:
-            result += "B";
-            break;
-        case GREEN:
-            result += "G";
-            break;
-        case YELLOW:
-            result += "Y";
-            break;
-        case NONE:
-            result += hasRightItem ? "-" : " ";
-            break;
-    }
-    return result;
-}
 
 PipeLine PipeLine::fromString(const QString &string) {
     QHash<GridPosition, Tile> tiles;
@@ -484,5 +415,19 @@ bool PipeLine::hasValidNeighbourgh(const GridPosition &position, const Tile &til
     }
     return !otherConnection && !otherStackOtherConnection;
 }
+
+PipeLine PipeLine::resizeGrid(int width, int height) const {
+    PipeLine copy(Grid(width,height));
+    for (auto it = tiles.begin(); it != tiles.end(); ++it) {
+        const GridPosition &position = it.key();
+        const Tile &tile = it.value();
+        if (position.getHorizontal() >= width || position.getVertical() >= height) {
+            continue;
+        }
+        copy.put(GridPosition(copy.grid, position.getStack(), position.getHorizontal(), position.getVertical()), tile);
+    }
+    return copy;
+}
+
 
 

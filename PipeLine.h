@@ -63,8 +63,10 @@ public:
 
     void disableOverlap();
 
+
+    PipeLine resizeGrid(int width, int height) const;
+
 private:
-    static QString typeAndColorToChar(Tile tile, bool hasRightItem);
 
     bool isEmptyAndAvailable(GridPosition position);
 

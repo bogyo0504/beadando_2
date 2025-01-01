@@ -46,6 +46,8 @@ public:
     static Stock fromString(const QString &string);
 
     QMap<Tile, int> enumStock() const;
+
+    QString toQString();
 };
 
 

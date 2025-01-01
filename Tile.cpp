@@ -26,6 +26,13 @@ TileType Tile::getType() const {
 
 void Tile::setType(TileType type) {
     Tile::type = type;
+    if(type == SINK || type == SOURCE){
+        if(color == NONE){
+            Tile::color = CIAN;
+        }
+    } else {
+        Tile::color = NONE;
+    }
 }
 
 TileColor Tile::getColor() const {
@@ -33,8 +40,16 @@ TileColor Tile::getColor() const {
 }
 
 void Tile::setColor(TileColor color) {
-    Tile::color = color;
-}
+    if (type == SINK || type == SOURCE) {
+        if (color == NONE) {
+            Tile::color = CIAN;
+            return;
+        }
+        Tile::color = color;
+        return;
+    }
+        Tile::color = NONE;
+    }
 
 
 bool Tile::operator==(const Tile &rhs) const {
@@ -146,6 +161,9 @@ Tile Tile::fromString(const QString &string) {
 }
 
 Rotation Tile::getMaxPossibleRotation() const {
+    if(connections == 15){
+        return 1;
+    }
     if (connections == 5 || connections == 10) {
         return 2;
     }
@@ -174,6 +192,87 @@ bool Tile::hasConnentionInStep(GridPositionStep step) const {
 
     }
 }
+
+QString Tile::toQString() const {
+    if(isPostIt()){
+        return "     ";
+    }
+    QString result;
+    int leftSide = getConnections() & CSP_LEFT;
+    int rightSide = getConnections() & CSP_RIGHT;
+    int topSide = getConnections() & CSP_TOP;
+    int bottomSide = getConnections() & CSP_BOTTOM;
+    if (leftSide != 0) {
+        result += "-";
+    } else {
+        result += " ";
+    }
+    if (topSide != 0) {
+        if (bottomSide != 0) {
+            result += "|";
+        } else {
+            result += "'";
+        }
+    } else {
+        if (bottomSide != 0) {
+            result += ".";
+        } else {
+            if (leftSide != 0 && rightSide != 0) {
+                result += "-";
+            } else {
+                result += " ";
+            }
+        }
+    }
+    if (rightSide != 0) {
+        result += "-";
+    } else {
+        result += " ";
+    }
+    result += typeAndColorToChar(rightSide != 0);
+    return result;
+}
+
+
+QString Tile::typeAndColorToChar(bool hasRightItem) const {
+    QString result;
+    switch (getType()) {
+        case NORMAL:
+            result += hasRightItem ? "-" : " ";
+            break;
+        case SOURCE:
+            result += "o";
+            break;
+        case SINK:
+            result += "c";
+            break;
+        case VALVE:
+            result += "0";
+            break;
+    }
+    switch (getColor()) {
+        case RED:
+            result += "R";
+            break;
+        case CIAN:
+            result += "C";
+            break;
+        case BLUE:
+            result += "B";
+            break;
+        case GREEN:
+            result += "G";
+            break;
+        case YELLOW:
+            result += "Y";
+            break;
+        case NONE:
+            result += hasRightItem ? "-" : " ";
+            break;
+    }
+    return result;
+}
+
 
 
 

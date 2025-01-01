@@ -16,7 +16,15 @@ Stock Stock::operator-(const Tile &tile) const {
         return *this;
     }
     QMap<Tile, int> resultStock = stock;
-    resultStock[tile] = resultStock[tile] - 1;
+    if (resultStock[tile] <= 0) {
+        return *this;
+    }
+    int tileCount = resultStock[tile] - 1;
+    if (tileCount > 0) {
+        resultStock[tile] = resultStock[tile] - 1;
+    } else {
+        resultStock.remove(tile);
+    }
     return Stock(resultStock);
 }
 
@@ -51,7 +59,7 @@ bool Stock::contains(const Tile &tile) const {
     return stock[tile] > 0;
 }
 
-Stock::Stock() : stock(){}
+Stock::Stock() : stock() {}
 
 
 /*
@@ -91,4 +99,14 @@ Stock Stock::fromString(const QString &string) {
 
 QMap<Tile, int> Stock::enumStock() const {
     return stock;
+}
+
+QString Stock::toQString() {
+    QString result;
+    for (auto it = stock.begin(); it != stock.end(); ++it) {
+        Tile key = it.key();
+        int value = it.value();
+        result += QString::number(value) + " " + key.toQString() + "\n";
+    }
+    return result;
 }

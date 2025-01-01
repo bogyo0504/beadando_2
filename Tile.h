@@ -86,6 +86,10 @@ public:
     bool hasConnectionInDirection(int direction) const;
 
     bool hasConnentionInStep(GridPositionStep step) const;
+
+    QString toQString() const;
+
+    QString typeAndColorToChar(bool hasRightItem) const;
 };
 
 

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QGraphicsScene>
 #include "Tile.h"
 #include "Stock.h"
 #include "PipeLine.h"
@@ -21,7 +22,7 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    TileType stringtoTileType(std::string s);
+    TileType stringToTileType(std::string s);
 
     TileColor stringtoTileColor(std::string s);
 
@@ -31,27 +32,35 @@ private:
 
     QString tilefilename(Tile t);
 
-
+    QGraphicsScene *scene;
     Tile currenttile;
     Stock currentstock;
+    PipeLine* currentPipes;
 
-    void updatecurrentpipe();
+    void updateCurrentPipe();
 
-    void updatestock();
+    void updateStock();
 
-    void updategrid(PipeLine &p);
+    void updateGrid();
 
 private slots:
-
-    void on_comboBox_currentTextChanged(const QString &arg1);
-
-    void on_comboBox_2_currentTextChanged(const QString &arg1);
-
-    void on_comboBox_3_currentTextChanged(const QString &arg1);
 
     void on_rotate_clicked();
 
     void on_addtostock_clicked();
+
+    void fillComboBoxes();
+    void on_tileConnectionBox_currentIndexChanged(int index);
+    void on_tileTypeBox_currentIndexChanged(int index);
+    void on_tileColorBox_currentIndexChanged(int index);
+    void on_addtogrid_clicked();
+    void on_delfromstock_clicked();
+    void on_delfromgrid_clicked();
+    void on_actionMent_s_triggered();
+    void on_actionBet_lt_s_triggered();
+    void on_width_valueChanged(int arg1);
+    void on_height_valueChanged(int arg1);
+    void on_pipeline_cellClicked(int row, int column);
 };
 
 #endif // MAINWINDOW_H

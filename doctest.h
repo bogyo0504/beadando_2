@@ -1056,7 +1056,7 @@ namespace detail {
     template <typename T, size_t N>
     void filloss(std::ostream* stream, const T (&in)[N]) { // NOLINT(*-avoid-c-arrays)
         // T[N], T(&)[N], T(&&)[N] have same behaviour.
-        // Hence remove reference.
+        // Hence removeTile reference.
         filloss<typename types::remove_reference<decltype(in)>::type>(stream, in);
     }
 
@@ -1397,7 +1397,7 @@ DOCTEST_CLANG_SUPPRESS_WARNING_WITH_PUSH("-Wunused-comparison")
         bool   m_passed;
         String m_decomp;
 
-        Result() = default; // TODO: Why do we need this? (To remove NOLINT)
+        Result() = default; // TODO: Why do we need this? (To removeTile NOLINT)
         Result(bool passed, const String& decomposition = String());
 
         // forbidding some expressions based on this table: https://en.cppreference.com/w/cpp/language/operator_precedence
@@ -3880,7 +3880,7 @@ const char* failureString(assertType::Enum at) {
 
 DOCTEST_CLANG_SUPPRESS_WARNING_WITH_PUSH("-Wnull-dereference")
 DOCTEST_GCC_SUPPRESS_WARNING_WITH_PUSH("-Wnull-dereference")
-// depending on the current options this will remove the path of filenames
+// depending on the current options this will removeTile the path of filenames
 const char* skipPathFromFilename(const char* file) {
 #ifndef DOCTEST_CONFIG_DISABLE
     if(getContextOptions()->no_path_in_filenames) {
@@ -5511,7 +5511,7 @@ namespace {
         void test_run_start() override {
             xml.writeDeclaration();
 
-            // remove .exe extension - mainly to have the same output on UNIX and Windows
+            // removeTile .exe extension - mainly to have the same output on UNIX and Windows
             std::string binary_name = skipPathFromFilename(opt.binary_name.c_str());
 #ifdef DOCTEST_PLATFORM_WINDOWS
             if(binary_name.rfind(".exe") != std::string::npos)
@@ -5814,7 +5814,7 @@ namespace {
         }
 
         void test_run_end(const TestRunStats& p) override {
-            // remove .exe extension - mainly to have the same output on UNIX and Windows
+            // removeTile .exe extension - mainly to have the same output on UNIX and Windows
             std::string binary_name = skipPathFromFilename(opt.binary_name.c_str());
 #ifdef DOCTEST_PLATFORM_WINDOWS
             if(binary_name.rfind(".exe") != std::string::npos)
