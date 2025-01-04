@@ -580,7 +580,7 @@ void MainWindow::on_start_clicked(){
         return;
     }
     solverIsRunning = true;
-    QProgressDialog progressBar("Csővezeték építése", "Mégse", 0, 100, this);
+    QProgressDialog progressBar("Csővezeték építése", "Mégse", 0, 0, this);
     progressBar.setWindowModality(Qt::WindowModal);
 
     const PipeLineValidator &validator = WindowedFlowValidator(phases, progressBar);

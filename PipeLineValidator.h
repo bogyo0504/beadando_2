@@ -16,7 +16,7 @@ enum ValidationResult{
 
 class PipeLineValidator {
 public:
-    virtual ValidationResult validate(const PipeLine &pipeLine) const;
+    virtual ValidationResult validate(const PipeLine &pipeLine, long alternativeCount) const;
 
 };
 
@@ -27,7 +27,7 @@ class FlowValidator : public PipeLineValidator {
 public:
     explicit FlowValidator(const QList<Phase> &phases);
 
-    ValidationResult validate(const PipeLine &pipeLine) const override ;
+    ValidationResult validate(const PipeLine &pipeLine, long alternativeCount) const override ;
 
     void debug();
 };
@@ -37,7 +37,7 @@ class WindowedFlowValidator : public FlowValidator {
 public:
     explicit WindowedFlowValidator(const QList<Phase> &phases, QProgressDialog &progressDialog);
 
-    ValidationResult validate(const PipeLine &pipeLine) const override;
+    ValidationResult validate(const PipeLine &pipeLine, long alternativeCount) const override;
 };
 
 #endif //BEADANDO_II_PIPELINEVALIDATOR_H

@@ -48,6 +48,8 @@ public:
     QMap<Tile, int> enumStock() const;
 
     QString toQString();
+
+    long getCountOfAlternatives(const Tile &tile) const;
 };
 
 

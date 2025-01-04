@@ -9,13 +9,13 @@ PipeLineBuilder::PipeLineBuilder(const PipeLineValidator &validator, PipeLine &p
                                                                                      pipeline(pipeline) {}
 
 ValidationResult PipeLineBuilder::build(const Stock &stock) {
-    BuildState currentState = BuildState(GridPosition(pipeline.getGrid(), 0, 0, 0), stock, IN_PROGRESS, PostIt, 0);
+    BuildState currentState = BuildState(GridPosition(pipeline.getGrid(), 0, 0, 0), stock, IN_PROGRESS, PostIt, 0, 0);
     while (true) {
         currentState = buildPipeLine(currentState);
         if (currentState.getStatus() == ERROR) {
             return INVALID;
         }
-        ValidationResult isValid = validator.validate(pipeline);
+        ValidationResult isValid = validator.validate(pipeline, pipeline.getAlternativeCount());
         if (isValid == VALID) {
             return VALID;
         }
@@ -29,7 +29,7 @@ ValidationResult PipeLineBuilder::build(const Stock &stock) {
             }
             currentState = successAndCurrentState.second;
             currentState = BuildState(currentState.getPosition(), currentState.getStock(), TRY_NEXT,
-                                      currentState.getCurrentTile(), currentState.getRotation());
+                                      currentState.getCurrentTile(), currentState.getRotation(), currentState.getAlternatives());
             currentState = pipeline.addElementFromStock(currentState);
             if (currentState.getStatus() != OUT_OF_STOCK) {
                 if (debugging || debugPosition.covers(successAndCurrentState.second.getPosition())) {

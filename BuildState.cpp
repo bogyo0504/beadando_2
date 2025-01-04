@@ -6,8 +6,9 @@
 
 
 BuildState::BuildState(const GridPosition &position, const Stock &stock, BuildStatus status, const Tile currentTile,
-                       Rotation rotation)
-        : position(position), stock(stock), status(status), currentTile(currentTile), rotation(rotation) {}
+                       Rotation rotation, long alternatives)
+        : position(position), stock(stock), status(status), currentTile(currentTile), rotation(rotation),
+          alternatives(alternatives) {}
 
 
 const GridPosition &BuildState::getPosition() const {
@@ -33,10 +34,15 @@ void BuildState::setRotation(Rotation rot) {
 BuildState::BuildState(const BuildState &buildState) : position(buildState.getPosition()), stock(buildState.getStock()),
                                                        status(buildState.getStatus()),
                                                        currentTile(buildState.getCurrentTile()),
-                                                       rotation(buildState.getRotation()){}
+                                                       rotation(buildState.getRotation()),
+                                                       alternatives(buildState.alternatives){}
 
  BuildStatus BuildState::getStatus() const {
     return status;
+}
+
+long BuildState::getAlternatives() const {
+    return alternatives;
 }
 
 

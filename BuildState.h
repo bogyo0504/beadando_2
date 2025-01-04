@@ -21,8 +21,10 @@ private:
     BuildStatus status;
     Tile currentTile;
     Rotation rotation;
+    long alternatives;
 public:
-    BuildState(const GridPosition &position, const Stock &stock, BuildStatus status, const Tile currentTile, Rotation rotation);
+    BuildState(const GridPosition &position, const Stock &stock, BuildStatus status, const Tile currentTile,
+               Rotation rotation, long alternatives);
 
     Rotation getRotation() const;
 
@@ -38,7 +40,7 @@ public:
 
     const Tile &getCurrentTile() const;
 
-
+    long getAlternatives() const;
 
 };
 

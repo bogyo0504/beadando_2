@@ -49,6 +49,20 @@ Tile Stock::getNextTile(const Tile &tile) const {
     return it.key();
 }
 
+long Stock::getCountOfAlternatives(const Tile &tile) const {
+
+    auto it = stock.lowerBound(tile);
+    if (it.key() == tile) {
+        it++;
+    }
+    long count = 1;
+    while (it != stock.end()) {
+        count += it.value();
+        it++;
+    }
+    return count;
+}
+
 bool Stock::contains(const Tile &tile) const {
     if (tile == PostIt) {
         return true;

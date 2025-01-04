@@ -222,7 +222,7 @@ TEST_CASE("Validáljuk 3x3-as tesztpéldát") {
     Phase phaseGreen = Phase({GREEN});
     Phase phaseBlue = Phase({BLUE});
     FlowValidator validator({phaseGreen, phaseBlue});
-    CHECK(validator.validate(pipeline));
+    CHECK(validator.validate(pipeline, 0));
 
 }
 
@@ -253,7 +253,7 @@ TEST_CASE("Validáljuk 3x3-as tesztpéldát, egyesített cellával") {
     Phase phaseGreen = Phase({GREEN, BLUE});
     Phase phaseBlue = Phase({BLUE});
     FlowValidator validator({phaseGreen, phaseBlue});
-    CHECK(validator.validate(pipeline));
+    CHECK(validator.validate(pipeline, 0));
 
 }
 
