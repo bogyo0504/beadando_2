@@ -6,332 +6,296 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>912</width>
-    <height>651</height>
+    <width>921</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QSplitter" name="splitter_6">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>12</y>
-      <width>886</width>
-      <height>170</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-    <widget class="QTableWidget" name="stock">
-     <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
-     <attribute name="horizontalHeaderVisible">
-      <bool>false</bool>
-     </attribute>
-     <attribute name="horizontalHeaderMinimumSectionSize">
-      <number>30</number>
-     </attribute>
-     <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>100</number>
-     </attribute>
-     <attribute name="verticalHeaderMinimumSectionSize">
-      <number>24</number>
-     </attribute>
-     <attribute name="verticalHeaderDefaultSectionSize">
-      <number>100</number>
-     </attribute>
-     <row>
-      <property name="text">
-       <string>Típus</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Darabszám</string>
-      </property>
-     </row>
-    </widget>
-    <widget class="QSplitter" name="splitter_4">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <widget class="QSplitter" name="splitter_2">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QSplitter" name="splitter_6">
       <property name="orientation">
-       <enum>Qt::Vertical</enum>
+       <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QWidget" name="layoutWidget">
-       <layout class="QFormLayout" name="formLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Alak:</string>
-          </property>
-          <property name="buddy">
-           <cstring>tileConnectionBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="tileConnectionBox"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Típus:</string>
-          </property>
-          <property name="buddy">
-           <cstring>tileTypeBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="tileTypeBox"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Szín:</string>
-          </property>
-          <property name="buddy">
-           <cstring>tileColorBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QComboBox" name="tileColorBox"/>
-        </item>
-       </layout>
+      <widget class="QTableWidget" name="stock">
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <attribute name="horizontalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="horizontalHeaderMinimumSectionSize">
+        <number>30</number>
+       </attribute>
+       <attribute name="horizontalHeaderDefaultSectionSize">
+        <number>100</number>
+       </attribute>
+       <attribute name="verticalHeaderMinimumSectionSize">
+        <number>24</number>
+       </attribute>
+       <attribute name="verticalHeaderDefaultSectionSize">
+        <number>100</number>
+       </attribute>
+       <row>
+        <property name="text">
+         <string>Típus</string>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>Darabszám</string>
+        </property>
+       </row>
       </widget>
-      <widget class="QLabel" name="preview">
+      <widget class="QSplitter" name="splitter_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QSplitter" name="splitter_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <widget class="QWidget" name="layoutWidget">
+         <layout class="QFormLayout" name="formLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Alak:</string>
+            </property>
+            <property name="buddy">
+             <cstring>tileConnectionBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="tileConnectionBox"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Típus:</string>
+            </property>
+            <property name="buddy">
+             <cstring>tileTypeBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="tileTypeBox"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Szín:</string>
+            </property>
+            <property name="buddy">
+             <cstring>tileColorBox</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="tileColorBox"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QLabel" name="preview">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QSplitter" name="splitter_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <widget class="QPushButton" name="start">
+         <property name="text">
+          <string>Indítás</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="rotate">
+         <property name="text">
+          <string>Forgatás</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="addtostock">
+         <property name="text">
+          <string>Hozzáadás a készlethez</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="addtogrid">
+         <property name="text">
+          <string>Hozzáadás a pályához</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="delfromstock">
+         <property name="text">
+          <string>Törlés a készletből</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="delfromgrid">
+         <property name="text">
+          <string>Törlés a pályáról</string>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QLabel" name="label_8">
        <property name="text">
-        <string/>
+        <string>Pálya szélessége:</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="width">
+       <property name="minimum">
+        <number>2</number>
+       </property>
+       <property name="maximum">
+        <number>20</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Pálya magassága:</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="height">
+       <property name="minimum">
+        <number>2</number>
+       </property>
+       <property name="maximum">
+        <number>20</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>X pozíció:</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="xpos">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Y pozíció:</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="ypos">
+       <property name="minimum">
+        <number>1</number>
        </property>
       </widget>
      </widget>
-     <widget class="QSplitter" name="splitter_3">
+    </item>
+    <item>
+     <widget class="QSplitter" name="splitter_7">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QPushButton" name="start">
-       <property name="text">
-        <string>Indítás</string>
+      <widget class="QTableWidget" name="pipeline">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>110</height>
+        </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="showGrid">
+        <bool>false</bool>
+       </property>
+       <property name="gridStyle">
+        <enum>Qt::NoPen</enum>
+       </property>
+       <attribute name="horizontalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="verticalHeaderVisible">
+        <bool>false</bool>
+       </attribute>
       </widget>
-      <widget class="QPushButton" name="rotate">
-       <property name="text">
-        <string>Forgatás</string>
+      <widget class="QSplitter" name="splitter_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-      </widget>
-      <widget class="QPushButton" name="addtostock">
-       <property name="text">
-        <string>Hozzáadás a készlethez</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="addtogrid">
-       <property name="text">
-        <string>Hozzáadás a pályához</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="delfromstock">
-       <property name="text">
-        <string>Törlés a készletből</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="delfromgrid">
-       <property name="text">
-        <string>Törlés a pályáról</string>
-       </property>
+       <widget class="QTableWidget" name="phasesWidget"/>
+       <widget class="QWidget" name="">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Szín :</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="chooseColor"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addColor">
+           <property name="text">
+            <string>Szín hozzáadása</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="deleteColor">
+           <property name="text">
+            <string>Szín törlése</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addPhase">
+           <property name="text">
+            <string>Fázis hozzáadása</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="deletePhase">
+           <property name="text">
+            <string>Fázis törlése</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
-    </widget>
-   </widget>
-   <widget class="QSplitter" name="splitter">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>188</y>
-      <width>886</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-    <widget class="QLabel" name="label_8">
-     <property name="text">
-      <string>Pálya szélessége:</string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="width">
-     <property name="minimum">
-      <number>2</number>
-     </property>
-     <property name="maximum">
-      <number>20</number>
-     </property>
-     <property name="singleStep">
-      <number>1</number>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_7">
-     <property name="text">
-      <string>Pálya magassága:</string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="height">
-     <property name="minimum">
-      <number>2</number>
-     </property>
-     <property name="maximum">
-      <number>20</number>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_10">
-     <property name="text">
-      <string>X pozíció:</string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="xpos">
-     <property name="minimum">
-      <number>1</number>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_9">
-     <property name="text">
-      <string>Y pozíció:</string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="ypos">
-     <property name="minimum">
-      <number>1</number>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QTableWidget" name="pipeline">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>220</y>
-      <width>891</width>
-      <height>201</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="editTriggers">
-     <set>QAbstractItemView::NoEditTriggers</set>
-    </property>
-    <property name="showGrid">
-     <bool>false</bool>
-    </property>
-    <property name="gridStyle">
-     <enum>Qt::NoPen</enum>
-    </property>
-    <attribute name="horizontalHeaderVisible">
-     <bool>false</bool>
-    </attribute>
-    <attribute name="verticalHeaderVisible">
-     <bool>false</bool>
-    </attribute>
-   </widget>
-   <widget class="QTableWidget" name="phasesWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>440</y>
-      <width>621</width>
-      <height>151</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="chooseColor">
-    <property name="geometry">
-     <rect>
-      <x>690</x>
-      <y>440</y>
-      <width>211</width>
-      <height>25</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="deleteColor">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>500</y>
-      <width>261</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Szín törlése</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="addColor">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>470</y>
-      <width>261</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Szín hozzáadása</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>440</y>
-      <width>51</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Szín :</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="addPhase">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>530</y>
-      <width>261</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Fázis hozzáadása</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="deletePhase">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>560</y>
-      <width>261</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Fázis törlése</string>
-    </property>
-   </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>912</width>
+     <width>921</width>
      <height>22</height>
     </rect>
    </property>

@@ -5,23 +5,27 @@
 #include <iostream>
 #include "PipeLineBuilder.h"
 
-PipeLineBuilder::PipeLineBuilder(PipeLineValidator &validator, PipeLine &pipeline) : validator(validator),
+PipeLineBuilder::PipeLineBuilder(const PipeLineValidator &validator, PipeLine &pipeline) : validator(validator),
                                                                                      pipeline(pipeline) {}
 
-bool PipeLineBuilder::build(const Stock &stock) {
+ValidationResult PipeLineBuilder::build(const Stock &stock) {
     BuildState currentState = BuildState(GridPosition(pipeline.getGrid(), 0, 0, 0), stock, IN_PROGRESS, PostIt, 0);
     while (true) {
         currentState = buildPipeLine(currentState);
         if (currentState.getStatus() == ERROR) {
-            return false;
+            return INVALID;
         }
-        if (validator.validate(pipeline)) {
-            return true;
+        ValidationResult isValid = validator.validate(pipeline);
+        if (isValid == VALID) {
+            return VALID;
+        }
+        if(isValid == BREAK){
+            return BREAK;
         }
         while (true) {
             QPair<bool, BuildState> successAndCurrentState = pipeline.stepBack();
             if (!successAndCurrentState.first) {
-                return false;
+                return INVALID;
             }
             currentState = successAndCurrentState.second;
             currentState = BuildState(currentState.getPosition(), currentState.getStock(), TRY_NEXT,
@@ -47,6 +51,7 @@ bool PipeLineBuilder::build(const Stock &stock) {
             }
         }
     }
+    return INVALID;
 }
 
 BuildState PipeLineBuilder::buildPipeLine(BuildState state) {

@@ -4,13 +4,19 @@
 
 #ifndef BEADANDO_II_PIPELINEVALIDATOR_H
 #define BEADANDO_II_PIPELINEVALIDATOR_H
+
+#include <QProgressDialog>
 #include "PipeLine.h"
 #include "Phase.h"
 #include "Flow.h"
 
+enum ValidationResult{
+    INVALID, VALID, BREAK
+};
+
 class PipeLineValidator {
 public:
-    virtual bool validate(const PipeLine &pipeLine);
+    virtual ValidationResult validate(const PipeLine &pipeLine) const;
 
 };
 
@@ -21,8 +27,18 @@ class FlowValidator : public PipeLineValidator {
 public:
     explicit FlowValidator(const QList<Phase> &phases);
 
-    bool validate(const PipeLine &pipeLine) override;
+    ValidationResult validate(const PipeLine &pipeLine) const override ;
 
     void debug();
 };
+
+class WindowedFlowValidator : public FlowValidator {
+    QProgressDialog &progressDialog;
+public:
+    explicit WindowedFlowValidator(const QList<Phase> &phases, QProgressDialog &progressDialog);
+
+    ValidationResult validate(const PipeLine &pipeLine) const override;
+};
+
 #endif //BEADANDO_II_PIPELINEVALIDATOR_H
+

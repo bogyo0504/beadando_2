@@ -162,7 +162,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 2x3-as tesztpéldán") {
     Phase phase = Phase({GREEN});
     FlowValidator validator({phase});
     PipeLineBuilder pipeLineBuilder(validator, pipeline);
-    CHECK(pipeLineBuilder.build(stock));
+    CHECK(pipeLineBuilder.build(stock)==VALID);
     std::cout << pipeline.toQString(true).toStdString();
 }
 
@@ -178,7 +178,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 3x3-as tesztpéldán 2") {
     Phase phase = Phase({GREEN});
     FlowValidator validator({phase});
     PipeLineBuilder pipeLineBuilder(validator, pipeline);
-    CHECK(pipeLineBuilder.build(stock));
+    CHECK(pipeLineBuilder.build(stock)==VALID);
     std::cout << pipeline.toQString(true).toStdString();
 }
 
@@ -195,7 +195,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 3x3-as tesztpéldán, szelepp
     Phase phase = Phase(GREEN);
     FlowValidator validator({phase});
     PipeLineBuilder pipeLineBuilder(validator, pipeline);
-    CHECK(pipeLineBuilder.build(stock));
+    CHECK(pipeLineBuilder.build(stock)==VALID);
     std::cout << pipeline.toQString(true).toStdString();
 }
 
@@ -209,7 +209,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 4x2-as tesztpéldán, felesle
     Phase phase = Phase({GREEN});
     FlowValidator validator({phase});
     PipeLineBuilder pipeLineBuilder(validator, pipeline);
-    CHECK(pipeLineBuilder.build(stock));
+    CHECK(pipeLineBuilder.build(stock)==VALID);
     std::cout << pipeline.toQString(true).toStdString();
 }
 
@@ -240,7 +240,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 3x3-as tesztpéldán 1") {
     Phase phaseBlue = Phase({BLUE});
     FlowValidator validator({phaseGreen, phaseBlue});
     PipeLineBuilder pipeLineBuilder(validator, pipeline);
-    CHECK(pipeLineBuilder.build(stock));
+    CHECK(pipeLineBuilder.build(stock)==VALID);
     std::cout << pipeline.toQString(true).toStdString();
 }
 
@@ -271,7 +271,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 3x3-as tesztpéldán, egyesí
     PipeLineBuilder pipeLineBuilder(validator, pipeline);
     validator.debug();
     pipeLineBuilder.debug();
-    CHECK(pipeLineBuilder.build(stock));
+    CHECK(pipeLineBuilder.build(stock)==VALID);
     std::cout << pipeline.toQString(true).toStdString();
 }
 
@@ -289,7 +289,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 6x3-as tesztpéldán") {
     Phase phaseBlue = Phase({BLUE});
     FlowValidator validator({phaseGreen, phaseBlue});
     PipeLineBuilder pipeLineBuilder(validator, pipeline);
-    CHECK(pipeLineBuilder.build(stock));
+    CHECK(pipeLineBuilder.build(stock)==VALID);
     std::cout << pipeline.toQString(true).toStdString();
 }
 
@@ -310,7 +310,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 4x3-as tesztpéldán") {
     // pipeLineBuilder.printPosition(GridPosition(pipeline.getGrid(), -1, 0, 1));
     // pipeLineBuilder.debug();
     // validator.debug();
-    CHECK(pipeLineBuilder.build(stock));
+    CHECK(pipeLineBuilder.build(stock)==VALID);
     std::cout << pipeline.toQString(true).toStdString();
 }
 
@@ -334,7 +334,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 5x3-as tesztpéldán, csappal
     // pipeLineBuilder.printPosition(GridPosition(pipeline.getGrid(), -1, 0, 1));
     // pipeLineBuilder.debug();
     // validator.debug();
-    CHECK(pipeLineBuilder.build(stock));
+    CHECK(pipeLineBuilder.build(stock)==VALID);
     std::cout << pipeline.toQString(true).toStdString();
 }
 
@@ -359,7 +359,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 5x5-as tesztpéldán, csappal
     // pipeLineBuilder.printPosition(GridPosition(pipeline.getGrid(), -1, 0, 1));
     // pipeLineBuilder.debug();
     // validator.debug();
-    CHECK(pipeLineBuilder.build(stock));
+    CHECK(pipeLineBuilder.build(stock)==VALID);
     std::cout << pipeline.toQString(true).toStdString();
 }
 
@@ -381,7 +381,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 9x5-as tesztpéldán, csak á
     FlowValidator validator({phaseGreen, phaseBlue, phaseYellow
                             });
     PipeLineBuilder pipeLineBuilder(validator, pipeline);
-    CHECK(pipeLineBuilder.build(stock));
+    CHECK(pipeLineBuilder.build(stock)==VALID);
     std::cout << pipeline.toQString(true).toStdString();
 }
 

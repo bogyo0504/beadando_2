@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QMessageBox>
+#include <QProgressDialog>
 #include "Tile.h"
 #include "PipeLine.h"
 #include "QBrush"
@@ -575,15 +576,23 @@ void MainWindow::on_actionKil_p_s_triggered()
 
 
 void MainWindow::on_start_clicked(){
-    FlowValidator validator = FlowValidator(phases);
+    if (solverIsRunning) {
+        return;
+    }
+    solverIsRunning = true;
+    QProgressDialog progressBar("Csővezeték építése", "Mégse", 0, 100, this);
+    progressBar.setWindowModality(Qt::WindowModal);
+
+    const PipeLineValidator &validator = WindowedFlowValidator(phases, progressBar);
     PipeLineBuilder builder = PipeLineBuilder(validator, *currentPipes);
     builder.resetBuild();
-    if (builder.build(currentstock)) {
+    if (builder.build(currentstock) != INVALID) {
         updateGrid();
-    }
-    else {
+    }  else {
         QMessageBox::warning(this, "Hiba", "A csővezeték kirakása nem sikerült");
     }
+    progressBar.close();
+    solverIsRunning = false;
 }
 
 

@@ -7,13 +7,13 @@
 #include "PipeLineValidator.h"
 
 class PipeLineBuilder {
-    PipeLineValidator &validator;
+    const PipeLineValidator &validator;
     PipeLine &pipeline;
     bool debugging = false;
     GridPosition debugPosition = INVALID_POSITION;
 public:
-    PipeLineBuilder(PipeLineValidator &validator, PipeLine &pipeline);
-    bool build(const Stock &stock);
+    PipeLineBuilder(const PipeLineValidator &validator, PipeLine &pipeline);
+    ValidationResult build(const Stock &stock);
 
     BuildState buildPipeLine(BuildState state);
 
