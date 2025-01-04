@@ -17,6 +17,10 @@ public:
     Phase(TileColor color);
 
     QSet<TileColor> getActiveColors() const;
+
+    static Phase fromString(const QString &string);
+
+    QString toQString() const;
 };
 
 

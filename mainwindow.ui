@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>902</width>
-    <height>582</height>
+    <width>912</width>
+    <height>651</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -150,16 +150,6 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QListWidget" name="listWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>385</y>
-      <width>886</width>
-      <height>160</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QSplitter" name="splitter">
     <property name="geometry">
      <rect>
@@ -227,8 +217,8 @@
      <rect>
       <x>10</x>
       <y>220</y>
-      <width>886</width>
-      <height>159</height>
+      <width>891</width>
+      <height>201</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -250,13 +240,98 @@
      <bool>false</bool>
     </attribute>
    </widget>
+   <widget class="QTableWidget" name="phasesWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>440</y>
+      <width>621</width>
+      <height>151</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="chooseColor">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>440</y>
+      <width>211</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="deleteColor">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>500</y>
+      <width>261</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Szín törlése</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="addColor">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>470</y>
+      <width>261</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Szín hozzáadása</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>440</y>
+      <width>51</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Szín :</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="addPhase">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>530</y>
+      <width>261</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fázis hozzáadása</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="deletePhase">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>560</y>
+      <width>261</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fázis törlése</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>902</width>
+     <width>912</width>
      <height>22</height>
     </rect>
    </property>
@@ -264,10 +339,10 @@
     <property name="title">
      <string>Menü</string>
     </property>
-    <addaction name="actionP_lya_bet_lt_se"/>
     <addaction name="actionMent_s"/>
     <addaction name="actionBet_lt_s"/>
     <addaction name="actionKil_p_s"/>
+    <addaction name="action_j_2"/>
    </widget>
    <addaction name="menuMen"/>
   </widget>
@@ -282,14 +357,14 @@
     <string>Mentés</string>
    </property>
   </action>
-  <action name="actionP_lya_bet_lt_se">
-   <property name="text">
-    <string>Új</string>
-   </property>
-  </action>
   <action name="actionKil_p_s">
    <property name="text">
     <string>Kilépés</string>
+   </property>
+  </action>
+  <action name="action_j_2">
+   <property name="text">
+    <string>Új</string>
    </property>
   </action>
  </widget>

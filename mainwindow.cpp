@@ -4,15 +4,18 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QMessageBox>
 #include "Tile.h"
 #include "PipeLine.h"
 #include "QBrush"
+#include "PipeLineBuilder.h"
 
 MainWindow::MainWindow(QWidget *parent)
-        : QMainWindow(parent), ui(new Ui::MainWindow), currentPipes(new PipeLine(Grid(3, 3))) {
+        : QMainWindow(parent), ui(new Ui::MainWindow), currentPipes(new PipeLine(Grid(3, 3))){
     ui->setupUi(this);
     fillComboBoxes();
     updateGrid();
+    updatePhases();
 }
 
 MainWindow::~MainWindow() {
@@ -32,7 +35,7 @@ TileType MainWindow::stringToTileType(std::string s) {
     }
 }
 
-TileColor MainWindow::stringtoTileColor(std::string s) {
+TileColor MainWindow::stringToTileColor(std::string s) {
     if (s == "RED") {
         return RED;
     } else if (s == "CIAN") {
@@ -60,6 +63,24 @@ std::string MainWindow::TileColorToString(TileColor color) {
             return "YELLOW";
         default:
             return "RED";
+    }
+}
+
+
+QString MainWindow::tileColorToName(TileColor color) {
+    switch (color) {
+        case RED:
+            return "Piros";
+        case CIAN:
+            return "Cián";
+        case BLUE:
+            return "Kék";
+        case GREEN:
+            return "Zöld";
+        case YELLOW:
+            return "Sárga";
+        default:
+            return "";
     }
 }
 
@@ -142,6 +163,30 @@ void MainWindow::updateStock() {
     }
 }
 
+void MainWindow::updatePhases() {
+    ui->phasesWidget->clearContents();
+    ui->phasesWidget->setRowCount(phases.size());
+    int max = 0;
+    for (const Phase &phase: phases) {
+        if (phase.getActiveColors().size() > max) {
+            max = phase.getActiveColors().size();
+        }
+    }
+    ui->phasesWidget->setColumnCount(max);
+    for (int i = 0; i < phases.size(); ++i) {
+        Phase phase = phases[i];
+        const QSet<TileColor> &colors = phase.getActiveColors();
+        auto it = colors.begin();
+        for (int j = 0; j < colors.size(); ++j) {
+            const TileColor &color = *it;
+            it++;
+            QTableWidgetItem *item = new QTableWidgetItem(tileColorToName(color));
+            item->setBackground(QBrush(tileColorToColor(color), Qt::SolidPattern));
+            item->setData(Qt::UserRole, color);
+            ui->phasesWidget->setItem(i, j, item);
+        }
+    }
+}
 
 void MainWindow::updateGrid() {
     ui->width->setValue(currentPipes->getGrid().getWidth());
@@ -177,7 +222,7 @@ void MainWindow::updateGrid() {
             }
 
             QPixmap pixmap(filename);
-            pixmap = pixmap.scaled(80, 80, Qt::KeepAspectRatio,Qt::SmoothTransformation);
+            pixmap = pixmap.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             QTableWidgetItem *item = new QTableWidgetItem();
             item->setData(Qt::DecorationRole, pixmap);
             item->setBackground(QBrush(QColor(200, 200, 200), Qt::SolidPattern));
@@ -235,6 +280,13 @@ void MainWindow::fillComboBoxes() {
     ui->tileColorBox->addItem("Kék", BLUE);
     ui->tileColorBox->addItem("Zöld", GREEN);
     ui->tileColorBox->addItem("Sárga", YELLOW);
+
+    ui->chooseColor->addItem("Piros", RED);
+    ui->chooseColor->addItem("Cián", CIAN);
+    ui->chooseColor->addItem("Kék", BLUE);
+    ui->chooseColor->addItem("Zöld", GREEN);
+    ui->chooseColor->addItem("Sárga", YELLOW);
+
     updateCurrentPipe();
 
 }
@@ -335,6 +387,10 @@ void MainWindow::on_actionMent_s_triggered() {
     }
     QTextStream out(&file);
     out << currentstock.toQString();
+    out << "[Phases]\n";
+    for (const Phase &phase: phases) {
+        out << phase.toQString() << "\n";
+    }
     out << "[Pipes]\n";
     out << currentPipes->toQString(false);
 }
@@ -359,13 +415,22 @@ void MainWindow::on_actionBet_lt_s_triggered() {
     QStringList stocksList;
     while (!in.atEnd()) {
         line = in.readLine();
-        if (line == "[Pipes]") {
+        if (line == "[Phases]") {
             break;
         }
         stocksList.push_back(line);
     }
 
     currentstock = Stock::fromString(stocksList.join("\n"));
+    phases.clear();
+    while (!in.atEnd()) {
+        line = in.readLine();
+        if (line == "[Pipes]") {
+            break;
+        }
+        Phase phase = Phase::fromString(line);
+        phases.push_back(phase);
+    }
     QStringList pipesList;
     while (!in.atEnd()) {
         line = in.readLine();
@@ -375,11 +440,11 @@ void MainWindow::on_actionBet_lt_s_triggered() {
     currentPipes = new PipeLine(PipeLine::fromString(pipesList.join("\n")));
     updateStock();
     updateGrid();
+    updatePhases();
 }
 
 
-void MainWindow::on_width_valueChanged(int arg1)
-{
+void MainWindow::on_width_valueChanged(int arg1) {
     PipeLine copy = currentPipes->resizeGrid(arg1, currentPipes->getGrid().getHeight());
     delete currentPipes;
     currentPipes = new PipeLine(copy);
@@ -387,8 +452,7 @@ void MainWindow::on_width_valueChanged(int arg1)
 }
 
 
-void MainWindow::on_height_valueChanged(int arg1)
-{
+void MainWindow::on_height_valueChanged(int arg1) {
     PipeLine copy = currentPipes->resizeGrid(currentPipes->getGrid().getWidth(), arg1);
     delete currentPipes;
     currentPipes = new PipeLine(copy);
@@ -396,9 +460,116 @@ void MainWindow::on_height_valueChanged(int arg1)
 }
 
 
-void MainWindow::on_pipeline_cellClicked(int row, int column)
-{
+void MainWindow::on_pipeline_cellClicked(int row, int column) {
     ui->xpos->setValue(column + 1);
     ui->ypos->setValue(row + 1);
+}
+
+QColor MainWindow::tileColorToColor(TileColor color) {
+    switch (color) {
+        case RED:
+            return QColor(200, 0, 0);
+        case CIAN:
+            return QColor(0, 200, 200);
+        case BLUE:
+            return QColor(0, 0, 200);
+        case GREEN:
+            return QColor(0, 200, 0);
+        case YELLOW:
+            return QColor(200, 200, 0);
+        default:
+            return QColor(0, 0, 0);
+    }
+
+}
+
+
+void MainWindow::on_deleteColor_clicked() {
+    int column = ui->phasesWidget->currentColumn();
+    int row = ui->phasesWidget->currentRow();
+
+    if (column == -1 || row == -1) {
+        return;
+    }
+
+    Phase phase = phases[row];
+    TileColor currentColor = (TileColor) ui->phasesWidget->item(row, column)->data(Qt::UserRole).toInt();
+    QSet<TileColor> colors = phase.getActiveColors();
+    colors.remove(currentColor);
+    phases[row] = Phase(colors);
+    updatePhases();
+}
+
+
+void MainWindow::on_addColor_clicked() {
+    int row = ui->phasesWidget->currentRow();
+    int column = ui->phasesWidget->currentColumn();
+    if (row == -1) {
+        row = 0;
+    }
+
+
+    TileColor color = (TileColor) ui->chooseColor->itemData(ui->chooseColor->currentIndex()).toInt();
+    QSet<TileColor> colors = phases[row].getActiveColors();
+    colors.insert(color);
+    phases[row] = Phase(colors);
+    updatePhases();
+}
+
+
+void MainWindow::on_deletePhase_clicked() {
+
+    int row = ui->phasesWidget->currentRow();
+
+    if (row == -1) {
+        return;
+    }
+    phases.removeAt(row);
+    updatePhases();
+}
+
+
+void MainWindow::on_addPhase_clicked()
+{
+    int row = ui->phasesWidget->currentRow();
+
+    if (row == -1) {
+        phases.push_back(Phase());
+    }
+    else {
+        phases.insert(row, Phase());
+    }
+    updatePhases();
+}
+
+
+void MainWindow::on_action_j_2_triggered()
+{  phases.clear();
+    currentstock = Stock();
+    delete currentPipes;
+    currentPipes = new PipeLine(Grid(3, 3));
+    updateStock();
+    updateGrid();
+    updatePhases();
+
+}
+
+
+
+void MainWindow::on_actionKil_p_s_triggered()
+{
+    exit(0);
+}
+
+
+void MainWindow::on_start_clicked(){
+    FlowValidator validator = FlowValidator(phases);
+    PipeLineBuilder builder = PipeLineBuilder(validator, *currentPipes);
+    if (builder.build(currentstock)) {
+        updateGrid();
+    }
+    else {
+        QMessageBox::warning(this, "Hiba", "A csővezeték kirakása nem sikerült");
+    }
 }
 

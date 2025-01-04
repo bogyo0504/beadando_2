@@ -385,5 +385,11 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 9x5-as tesztpéldán, csak á
     std::cout << pipeline.toQString(true).toStdString();
 }
 
+TEST_CASE("Teszteljük a Phase fromString és toString funkcióit"){
+    Phase phase = Phase({RED, BLUE, YELLOW});
+    CHECK(phase.toQString() == "RBY");
+    Phase phase2 = Phase::fromString("RBY");
+    CHECK(phase2.getActiveColors() == phase.getActiveColors());
+}
 
 

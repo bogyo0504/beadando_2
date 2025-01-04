@@ -6,6 +6,7 @@
 #include "Tile.h"
 #include "Stock.h"
 #include "PipeLine.h"
+#include "Phase.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,9 +23,9 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    TileType stringToTileType(std::string s);
+    static TileType stringToTileType(std::string s);
 
-    TileColor stringtoTileColor(std::string s);
+    TileColor stringToTileColor(std::string s);
 
     std::string TileColorToString(TileColor color);
 
@@ -36,6 +37,7 @@ private:
     Tile currenttile;
     Stock currentstock;
     PipeLine* currentPipes;
+    QList<Phase> phases;
 
     void updateCurrentPipe();
 
@@ -61,6 +63,18 @@ private slots:
     void on_width_valueChanged(int arg1);
     void on_height_valueChanged(int arg1);
     void on_pipeline_cellClicked(int row, int column);
+    void updatePhases();
+
+    QString tileColorToName(TileColor color);
+
+    QColor tileColorToColor(TileColor color);
+    void on_deleteColor_clicked();
+    void on_addColor_clicked();
+    void on_deletePhase_clicked();
+    void on_addPhase_clicked();
+    void on_action_j_2_triggered();
+    void on_actionKil_p_s_triggered();
+    void on_start_clicked();
 };
 
 #endif // MAINWINDOW_H
