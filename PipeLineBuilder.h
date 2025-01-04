@@ -21,6 +21,7 @@ public:
 
     void printPosition(GridPosition position);
 
+    void resetBuild();
 };
 
 

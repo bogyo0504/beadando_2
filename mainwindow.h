@@ -75,6 +75,7 @@ private slots:
     void on_action_j_2_triggered();
     void on_actionKil_p_s_triggered();
     void on_start_clicked();
+    void on_stock_cellClicked(int row, int column);
 };
 
 #endif // MAINWINDOW_H

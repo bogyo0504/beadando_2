@@ -90,6 +90,9 @@ Stock Stock::fromString(const QString &string) {
                 tileString += " ";
             }
         }
+        if (tileString.size() % 5 != 0) {
+           tileString += QString(5 - tileString.size() % 5, ' ');
+        }
         Tile tile = Tile::fromString(tileString);
         stock[tile] = number;
     }

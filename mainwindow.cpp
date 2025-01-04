@@ -159,6 +159,7 @@ void MainWindow::updateStock() {
         ui->stock->setItem(0, column, pixmapItem);
         QTableWidgetItem *valueItem = new QTableWidgetItem(QString::number(value));
         ui->stock->setItem(1, column, valueItem);
+
         column += 1;
     }
 }
@@ -339,6 +340,7 @@ void MainWindow::on_addtogrid_clicked() {
 
 
 void MainWindow::on_delfromstock_clicked() {
+
     currentstock = currentstock - currenttile;
     updateStock();
 }
@@ -392,7 +394,10 @@ void MainWindow::on_actionMent_s_triggered() {
         out << phase.toQString() << "\n";
     }
     out << "[Pipes]\n";
-    out << currentPipes->toQString(false);
+    QStringList pipel =  currentPipes->toQString(false).split('\n');
+    for (const QString &line: pipel) {
+        out << line << '`' << "\n";
+    }
 }
 
 
@@ -418,6 +423,7 @@ void MainWindow::on_actionBet_lt_s_triggered() {
         if (line == "[Phases]") {
             break;
         }
+
         stocksList.push_back(line);
     }
 
@@ -434,6 +440,12 @@ void MainWindow::on_actionBet_lt_s_triggered() {
     QStringList pipesList;
     while (!in.atEnd()) {
         line = in.readLine();
+        if(line.endsWith('`')){
+            line = line.mid(0,line.size()-1);
+        }
+        if (line.size() % 5 != 0) {
+            line += QString(5 - line.size() % 5, ' ');
+        }
         pipesList.push_back(line);
     }
     delete currentPipes;
@@ -565,11 +577,22 @@ void MainWindow::on_actionKil_p_s_triggered()
 void MainWindow::on_start_clicked(){
     FlowValidator validator = FlowValidator(phases);
     PipeLineBuilder builder = PipeLineBuilder(validator, *currentPipes);
+    builder.resetBuild();
     if (builder.build(currentstock)) {
         updateGrid();
     }
     else {
         QMessageBox::warning(this, "Hiba", "A csővezeték kirakása nem sikerült");
     }
+}
+
+
+void MainWindow::on_stock_cellClicked(int row, int column)
+{   if (column == -1) {
+        return;
+    }
+    Tile key = currentstock.enumStock().keys().at(column);
+    currenttile = key;
+    updateCurrentPipe();
 }
 

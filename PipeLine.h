@@ -66,6 +66,10 @@ public:
 
     PipeLine resizeGrid(int width, int height) const;
 
+    void resetBuildStates();
+
+    void removePostIts();
+
 private:
 
     bool isEmptyAndAvailable(GridPosition position);

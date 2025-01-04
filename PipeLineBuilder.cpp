@@ -63,3 +63,8 @@ void PipeLineBuilder::debug() {
 void PipeLineBuilder::printPosition(GridPosition position) {
     debugPosition = position;
 }
+
+void PipeLineBuilder::resetBuild() {
+    pipeline.resetBuildStates();
+    pipeline.removePostIts();
+}
