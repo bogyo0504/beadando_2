@@ -484,7 +484,7 @@ void MainWindow::deletePipelineElements() {
 
 void MainWindow::on_width_valueChanged(int arg1) {
     PipeLine copy = currentPipes->resizeGrid(arg1, currentPipes->getGrid().getHeight());
-    deletePipelineElements();
+    revertToRollBackPipeLine();
     currentPipes = new PipeLine(copy);
     updateGrid();
 }
@@ -492,7 +492,7 @@ void MainWindow::on_width_valueChanged(int arg1) {
 
 void MainWindow::on_height_valueChanged(int arg1) {
     PipeLine copy = currentPipes->resizeGrid(currentPipes->getGrid().getWidth(), arg1);
-    deletePipelineElements();
+    revertToRollBackPipeLine();
     currentPipes = new PipeLine(copy);
     updateGrid();
 }
@@ -548,6 +548,11 @@ void MainWindow::on_addColor_clicked() {
 
 
     TileColor color = (TileColor) ui->chooseColor->itemData(ui->chooseColor->currentIndex()).toInt();
+    if (phases.isEmpty()) {
+        phases.push_back(Phase(QSet<TileColor>{color}));
+        updatePhases();
+        return;
+    }
     QSet<TileColor> colors = phases[row].getActiveColors();
     colors.insert(color);
     phases[row] = Phase(colors);
@@ -646,7 +651,7 @@ void MainWindow::on_phasesWidget_cellDoubleClicked(int row, int column) {
 
 
 void MainWindow::on_actionVissza_ll_t_s_triggered() {
-   revertToRollBackPipeLine();
+    revertToRollBackPipeLine();
 }
 
 
@@ -658,7 +663,7 @@ void MainWindow::on_optimal_clicked() {
     revertToRollBackPipeLine();
     originalPipes = new PipeLine(*currentPipes);
     QList<std::shared_ptr<QPair<PipeLine, int>>> bestPipes;
-    
+
     QProgressDialog progressBar("Csővezeték építése", "Mégse", 0, 100, this);
     progressBar.setWindowModality(Qt::WindowModal);
     progressBar.show();
@@ -667,10 +672,11 @@ void MainWindow::on_optimal_clicked() {
     PipeLineBuilder builder = PipeLineBuilder(validator, *currentPipes);
     builder.resetBuild();
     QCoreApplication::processEvents();
-    while(true) {
+    while (true) {
         const ValidationResult &vrWithCoolness = builder.build(currentstock);
         if (vrWithCoolness.getType() == VR_VALID) {
-            bestPipes.push_back(std::make_shared<QPair<PipeLine, int>>(QPair<PipeLine, int>(PipeLine(*currentPipes), vrWithCoolness.getRateCoolness())));
+            bestPipes.push_back(std::make_shared<QPair<PipeLine, int>>(
+                    QPair<PipeLine, int>(PipeLine(*currentPipes), vrWithCoolness.getRateCoolness())));
         } else {
             if (vrWithCoolness == BREAK) {
                 solverIsRunning = false;

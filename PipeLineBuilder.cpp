@@ -28,7 +28,7 @@ ValidationResult PipeLineBuilder::build(const Stock &stock) {
             if (currentState.getStatus() == ERROR) {
                 return INVALID;
             }
-            if (progressValue < 100000000) {
+            if (progressValue < 1000000 && progressIntervalMax < 0x10000000 && progressIntervalMin > -(0x10000000)) {
                 progressValue++;
                 if (progressValue > progressLimit) {
                     progressValue = progressLimit;
