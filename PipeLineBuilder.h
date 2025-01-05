@@ -9,6 +9,10 @@
 class PipeLineBuilder {
     const PipeLineValidator &validator;
     PipeLine &pipeline;
+    int progressIntervalMin = 0;
+    int progressIntervalMax = 1024;
+    int progressValue = 0;
+    int progressLimit = 512;
     bool debugging = false;
     GridPosition debugPosition = INVALID_POSITION;
 public:

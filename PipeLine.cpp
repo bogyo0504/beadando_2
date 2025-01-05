@@ -107,7 +107,7 @@ BuildState PipeLine::addElementFromStock(const BuildState &state) {
     }
     //ha az állapot befejezett, szimplán a befejezett állapotot fogja visszaadni
     if (state.getPosition() == INVALID_POSITION) {
-        return {INVALID_POSITION, state.getStock(), READY, PostIt, 0, 0};
+        return {INVALID_POSITION, state.getStock(), READY, PostIt, 0};
     }
     //ha a pozíció invalid, tehát olyan helyre akarunk Tile-t tenni, amelyre nem lehet, akkor egy olyan
     //állapottal tér vissza, amely az invalid pozíciót, az adott állapotban lévő készletet adja vissza,
@@ -119,7 +119,7 @@ BuildState PipeLine::addElementFromStock(const BuildState &state) {
         while (!isEmptyAndAvailable(currentPosition)) {
             currentPosition = ++currentPosition;
             if (currentPosition == INVALID_POSITION) {
-                return {INVALID_POSITION, state.getStock(), READY, PostIt, 0, 0};
+                return {INVALID_POSITION, state.getStock(), READY, PostIt, 0};
             }
         }
     }
@@ -141,33 +141,33 @@ BuildState PipeLine::addElementFromStock(const BuildState &state) {
                     Tile newTile = state.getStock().getNextTile(currentTile);
 
                     if (newTile == PostIt) {
-                        return {INVALID_POSITION, state.getStock(), OUT_OF_STOCK, PostIt, 0, 0};
+                        return {INVALID_POSITION, state.getStock(), OUT_OF_STOCK, PostIt, 0};
                     } else {
                         const Rotation rotation = findRotation(currentPosition, newTile);
                         if (rotation != INVALID_ROTATION) {
-                            return {currentPosition, state.getStock(), IN_PROGRESS, newTile, rotation, 0};
+                            return {currentPosition, state.getStock(), IN_PROGRESS, newTile, rotation};
                         }
                     }
                     currentTile = newTile;
                 }
             } else {
                 return {currentPosition, state.getStock(), IN_PROGRESS, state.getCurrentTile(),
-                        (Rotation) (state.getRotation() + 1), 0};
+                        (Rotation) (state.getRotation() + 1)};
             }
         } else {
             put(currentPosition, rotatedTile);
             states.push(std::make_shared<BuildState>(
                     BuildState(currentPosition, state.getStock(), IN_PROGRESS, state.getCurrentTile(),
-                               state.getRotation(), state.getStock().getCountOfAlternatives(state.getCurrentTile()))));
-            return {++currentPosition, newStock, IN_PROGRESS, PostIt, 0, 0};
+                               state.getRotation())));
+            return {++currentPosition, newStock, IN_PROGRESS, PostIt, 0};
         }
 
     } else {
         const Tile &newTile = state.getStock().getNextTile(state.getCurrentTile());
         if (newTile == PostIt) {
-            return {INVALID_POSITION, state.getStock(), OUT_OF_STOCK, PostIt, 0, 0};
+            return {INVALID_POSITION, state.getStock(), OUT_OF_STOCK, PostIt, 0};
         } else {
-            return {currentPosition, state.getStock(), IN_PROGRESS, newTile, 0, 0};
+            return {currentPosition, state.getStock(), IN_PROGRESS, newTile, 0};
         }
     }
 }
@@ -342,7 +342,7 @@ const Grid &PipeLine::getGrid() const {
 
 QPair<bool, BuildState> PipeLine::stepBack() {
     if (states.empty()) {
-        return {false, BuildState(INVALID_POSITION, Stock(), ERROR, PostIt, 0, 0)};
+        return {false, BuildState(INVALID_POSITION, Stock(), ERROR, PostIt, 0)};
     }
     BuildState state = *states.pop();
     clear(state.getPosition());
@@ -450,15 +450,6 @@ void PipeLine::removePostIts() {
     }
 }
 
-long PipeLine::getAlternativeCount() {
-    long result = 1;
-    for (const auto &item: states) {
-        if (result < 0x000FFFFFFFFFFFFF && item->getAlternatives() < 255) {
-            result *= item->getAlternatives();
-        }
-    }
-    return result;
-}
 
 
 

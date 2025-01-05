@@ -70,8 +70,6 @@ public:
 
     void removePostIts();
 
-    long getAlternativeCount();
-
 private:
 
     bool isEmptyAndAvailable(GridPosition position);

@@ -580,12 +580,13 @@ void MainWindow::on_start_clicked(){
         return;
     }
     solverIsRunning = true;
-    QProgressDialog progressBar("Csővezeték építése", "Mégse", 0, 0, this);
+    QProgressDialog progressBar("Csővezeték építése", "Mégse", 0, 100, this);
     progressBar.setWindowModality(Qt::WindowModal);
 
     const PipeLineValidator &validator = WindowedFlowValidator(phases, progressBar);
     PipeLineBuilder builder = PipeLineBuilder(validator, *currentPipes);
     builder.resetBuild();
+    QCoreApplication::processEvents();
     if (builder.build(currentstock) != INVALID) {
         updateGrid();
     }  else {

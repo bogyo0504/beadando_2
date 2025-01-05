@@ -6,13 +6,13 @@
 #include <QCoreApplication>
 #include "PipeLineValidator.h"
 
-ValidationResult PipeLineValidator::validate(const PipeLine &pipeLine, long alternativeCount) const {
+ValidationResult PipeLineValidator::validate(const PipeLine &pipeLine, int progress) const {
     return INVALID;
 }
 
 FlowValidator::FlowValidator(const QList<Phase> &phases) : phases(phases) {}
 
-ValidationResult FlowValidator::validate(const PipeLine &pipeLine, long alternativeCount) const {
+ValidationResult FlowValidator::validate(const PipeLine &pipeLine, int progress) const {
     if (debugging) {
         std::cout << "Validating pipeline\n" << pipeLine.toQString(true).toStdString() << std::endl;
     }
@@ -34,18 +34,11 @@ WindowedFlowValidator::WindowedFlowValidator(const QList<Phase> &phases, QProgre
 
 }
 
-ValidationResult WindowedFlowValidator::validate(const PipeLine &pipeLine, long alternativeCount) const {
+ValidationResult WindowedFlowValidator::validate(const PipeLine &pipeLine, int progress) const {
     ValidationResult result = FlowValidator::validate(pipeLine, 0);
     QCoreApplication::processEvents();
-    if (progressDialog.maximum() == 0 && alternativeCount < 0x7FFFFFFF) {
-        progressDialog.setMaximum((int) alternativeCount);
-    }
-    if (alternativeCount < 0x7FFFFFFF) {
-        if (progressDialog.maximum() >= (int) alternativeCount) {
-            progressDialog.setValue(progressDialog.maximum() - (int) alternativeCount);
-        }
-    }
-    if(progressDialog.wasCanceled()){
+    progressDialog.setValue(progress);
+    if (progressDialog.wasCanceled()) {
         return BREAK;
     }
     return result;

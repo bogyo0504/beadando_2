@@ -49,7 +49,6 @@ public:
 
     QString toQString();
 
-    long getCountOfAlternatives(const Tile &tile) const;
 };
 
 
