@@ -10,9 +10,28 @@
 #include "Phase.h"
 #include "Flow.h"
 
-enum ValidationResult{
-    INVALID, VALID, BREAK
+
+enum ValidationResultType{
+    VR_INVALID, VR_VALID, VR_BREAK
 };
+
+class ValidationResult{
+    const ValidationResultType type;
+    const int rateCoolness;
+public:
+    bool operator==(const ValidationResult &rhs) const;
+
+    bool operator!=(const ValidationResult &rhs) const;
+
+    ValidationResult(ValidationResultType type, int rateCoolness);
+
+    int getRateCoolness() const;
+
+    ValidationResultType getType() const;
+};
+
+#define INVALID ValidationResult(VR_INVALID, 0)
+#define BREAK ValidationResult(VR_BREAK, 0)
 
 class PipeLineValidator {
 public:

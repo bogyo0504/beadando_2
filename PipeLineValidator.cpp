@@ -16,13 +16,17 @@ ValidationResult FlowValidator::validate(const PipeLine &pipeLine, int progress)
     if (debugging) {
         std::cout << "Validating pipeline\n" << pipeLine.toQString(true).toStdString() << std::endl;
     }
+    int coolnessRate = 0;
     for (const Phase &phase: phases) {
         Flow flow;
-        if (!flow.makeFlow(pipeLine, phase)) {
+        int coolness = flow.makeFlow(pipeLine, phase);
+        if (coolness == -1) {
+
             return INVALID;
         }
+        coolnessRate += coolness;
     }
-    return VALID;
+    return ValidationResult(VR_VALID, coolnessRate);
 }
 
 void FlowValidator::debug() {
@@ -37,9 +41,29 @@ WindowedFlowValidator::WindowedFlowValidator(const QList<Phase> &phases, QProgre
 ValidationResult WindowedFlowValidator::validate(const PipeLine &pipeLine, int progress) const {
     ValidationResult result = FlowValidator::validate(pipeLine, 0);
     QCoreApplication::processEvents();
-    progressDialog.setValue(progress);
-    if (progressDialog.wasCanceled()) {
+            progressDialog.setValue( progress);
+    if(progressDialog.wasCanceled()){
         return BREAK;
     }
     return result;
+}
+
+bool ValidationResult::operator==(const ValidationResult &rhs) const {
+    return type == rhs.type &&
+           rateCoolness == rhs.rateCoolness;
+}
+
+bool ValidationResult::operator!=(const ValidationResult &rhs) const {
+    return !(rhs == *this);
+}
+
+ValidationResult::ValidationResult(ValidationResultType type, int rateCoolness) : type(type),
+                                                                                  rateCoolness(rateCoolness) {}
+
+ValidationResultType ValidationResult::getType() const {
+    return type;
+}
+
+int ValidationResult::getRateCoolness() const {
+    return rateCoolness;
 }

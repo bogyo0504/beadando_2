@@ -14,8 +14,8 @@ class Flow {
     Grid grid = Grid(0,0);
 public:
 
-    bool makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfig);
-    bool makeFlow(const PipeLine &pipeLine, const Phase &phase);
+    int makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfig);
+    int makeFlow(const PipeLine &pipeLine, const Phase &phase);
     QString toQString() const;
 
     TileColor getTileColorAt(GridPosition &position) const;

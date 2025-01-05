@@ -9,42 +9,56 @@ PipeLineBuilder::PipeLineBuilder(const PipeLineValidator &validator, PipeLine &p
                                                                                            pipeline(pipeline) {}
 
 ValidationResult PipeLineBuilder::build(const Stock &stock) {
-    progressIntervalMin = 0;
-    progressIntervalMax = 65536;
-    progressValue = 0;
-    progressLimit = 32768;
+    bool skipCurrentStep = false;
+    if (!inProgress) {
+        progressIntervalMin = 0;
+        progressIntervalMax = 65536;
+        progressValue = 0;
+        progressLimit = 32768;
+
+    } else {
+        skipCurrentStep = true;
+    }
+    inProgress = true;
+
     BuildState currentState = BuildState(GridPosition(pipeline.getGrid(), 0, 0, 0), stock, IN_PROGRESS, PostIt, 0);
     while (true) {
-        currentState = buildPipeLine(currentState);
-        if (currentState.getStatus() == ERROR) {
-            return INVALID;
-        }
-        if (progressValue < 100000000) {
-            progressValue++;
-            if (progressValue > progressLimit) {
-                progressValue = progressLimit;
-                double progressRate = (double) (progressValue-progressIntervalMin) / (progressIntervalMax - progressIntervalMin);
-                progressIntervalMax = progressIntervalMax * 2;
+        if (!skipCurrentStep) {
+            currentState = buildPipeLine(currentState);
+            if (currentState.getStatus() == ERROR) {
+                return INVALID;
+            }
+            if (progressValue < 100000000) {
+                progressValue++;
+                if (progressValue > progressLimit) {
+                    progressValue = progressLimit;
+                    double progressRate =
+                            (double) (progressValue - progressIntervalMin) /
+                            (progressIntervalMax - progressIntervalMin);
+                    progressIntervalMax = progressIntervalMax * 2;
 
-                // (x-m)*r = p-m
-                // x*r-m*r = p-m
-                // x*r -p = m*r -m
-                // x*r -p = m*(r-1)
-                // m = (x*r -p) / (r-1)
-                progressIntervalMin = (int) ((((double) progressIntervalMax) * progressRate - (double) progressValue) /
-                                             (progressRate - 1));
-                progressLimit = (progressIntervalMax - progressValue) / 2;
+                    // (x-m)*r = p-m
+                    // x*r-m*r = p-m
+                    // x*r -p = m*r -m
+                    // x*r -p = m*(r-1)
+                    // m = (x*r -p) / (r-1)
+                    progressIntervalMin = (int) (
+                            (((double) progressIntervalMax) * progressRate - (double) progressValue) /
+                            (progressRate - 1));
+                    progressLimit = (progressIntervalMax - progressValue) / 2;
+                }
+            }
+
+            ValidationResult isValid = validator.validate(pipeline, ((progressValue - progressIntervalMin) * 100) /
+                                                                    (progressIntervalMax - progressIntervalMin));
+            if (isValid.getType() == VR_VALID) {
+                return isValid;
+            }
+            if (isValid == BREAK) {
+                return BREAK;
             }
         }
-
-        ValidationResult isValid = validator.validate(pipeline, ((progressValue-progressIntervalMin) * 100) /
-                                                                (progressIntervalMax - progressIntervalMin));
-        if (isValid == VALID) {
-            return VALID;
-        }
-        if (isValid == BREAK) {
-            return BREAK;
-        }
+        skipCurrentStep = false;
         while (true) {
             QPair<bool, BuildState> successAndCurrentState = pipeline.stepBack();
             if (!successAndCurrentState.first) {
@@ -94,6 +108,7 @@ void PipeLineBuilder::printPosition(GridPosition position) {
 }
 
 void PipeLineBuilder::resetBuild() {
+    inProgress = false;
     pipeline.resetBuildStates();
     pipeline.removePostIts();
 }

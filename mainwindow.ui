@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>921</width>
-    <height>558</height>
+    <width>920</width>
+    <height>663</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -114,6 +114,11 @@
         <widget class="QPushButton" name="start">
          <property name="text">
           <string>Indítás</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="optimal">
+         <property name="text">
+          <string>Optimális keresése</string>
          </property>
         </widget>
         <widget class="QPushButton" name="rotate">
@@ -299,7 +304,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>921</width>
+     <width>920</width>
      <height>22</height>
     </rect>
    </property>

@@ -13,6 +13,7 @@ class PipeLineBuilder {
     int progressIntervalMax = 1024;
     int progressValue = 0;
     int progressLimit = 512;
+    bool inProgress = false;
     bool debugging = false;
     GridPosition debugPosition = INVALID_POSITION;
 public:

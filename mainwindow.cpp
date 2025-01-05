@@ -25,7 +25,7 @@ MainWindow::~MainWindow() {
     if (flow != nullptr) {
         delete flow;
     }
-    delete originalPipes;
+    clearRollBackPipeLine();
 }
 
 TileType MainWindow::stringToTileType(std::string s) {
@@ -336,6 +336,7 @@ void MainWindow::on_addtogrid_clicked() {
         y_pos >= currentPipes->getGrid().getHeight()) {
         return;
     }
+    clearRollBackPipeLine();
     GridPosition pos = GridPosition(currentPipes->getGrid(), 0, x_pos, y_pos);
     if (currenttile.isCorner() && (*currentPipes)[pos].isCorner()) {
         GridPosition pos_other = GridPosition(currentPipes->getGrid(), 1, x_pos, y_pos);
@@ -368,6 +369,7 @@ void MainWindow::on_delfromgrid_clicked() {
         y_pos >= currentPipes->getGrid().getHeight()) {
         return;
     }
+    clearRollBackPipeLine();
     GridPosition pos = GridPosition(currentPipes->getGrid(), 0, x_pos, y_pos);
     GridPosition pos_other = GridPosition(currentPipes->getGrid(), 1, x_pos, y_pos);
 
@@ -463,10 +465,7 @@ void MainWindow::on_actionBet_lt_s_triggered() {
         }
         pipesList.push_back(line);
     }
-    if(originalPipes != nullptr){
-        delete originalPipes;
-        originalPipes = nullptr;
-    }
+    clearRollBackPipeLine();
     deletePipelineElements();
     currentPipes = new PipeLine(PipeLine::fromString(pipesList.join("\n")));
     updateStock();
@@ -603,9 +602,7 @@ void MainWindow::on_start_clicked() {
         return;
     }
     solverIsRunning = true;
-    if(originalPipes != nullptr){
-        delete originalPipes;
-    }
+    revertToRollBackPipeLine();
     originalPipes = new PipeLine(*currentPipes);
     QProgressDialog progressBar("Csővezeték építése", "Mégse", 0, 100, this);
     progressBar.setWindowModality(Qt::WindowModal);
@@ -647,7 +644,70 @@ void MainWindow::on_phasesWidget_cellDoubleClicked(int row, int column) {
 }
 
 
-void MainWindow::on_actionVissza_ll_t_s_triggered(){
+void MainWindow::on_actionVissza_ll_t_s_triggered() {
+   revertToRollBackPipeLine();
+}
+
+
+void MainWindow::on_optimal_clicked() {
+    if (solverIsRunning) {
+        return;
+    }
+    solverIsRunning = true;
+    revertToRollBackPipeLine();
+    originalPipes = new PipeLine(*currentPipes);
+    QList<std::shared_ptr<QPair<PipeLine, int>>> bestPipes;
+    
+    QProgressDialog progressBar("Csővezeték építése", "Mégse", 0, 100, this);
+    progressBar.setWindowModality(Qt::WindowModal);
+
+    const PipeLineValidator &validator = WindowedFlowValidator(phases, progressBar);
+    PipeLineBuilder builder = PipeLineBuilder(validator, *currentPipes);
+    builder.resetBuild();
+    QCoreApplication::processEvents();
+    while(true) {
+        const ValidationResult &vrWithCoolness = builder.build(currentstock);
+        if (vrWithCoolness.getType() == VR_VALID) {
+            bestPipes.push_back(std::make_shared<QPair<PipeLine, int>>(QPair<PipeLine, int>(PipeLine(*currentPipes), vrWithCoolness.getRateCoolness())));
+        } else {
+            if (vrWithCoolness == BREAK) {
+                solverIsRunning = false;
+                progressBar.close();
+                updateGrid();
+                return;
+            }
+            break;
+        }
+    }
+    if (bestPipes.empty()) {
+        QMessageBox::warning(this, "Hiba", "A csővezeték kirakása nem sikerült");
+    }
+
+    int bestCoolness = -1;
+    int bestPipe = -1;
+    for (int i = 0; i < bestPipes.size(); ++i) {
+        if (bestPipes[i]->second > bestCoolness) {
+            bestCoolness = bestPipes[i]->second;
+            bestPipe = i;
+        }
+    }
+    if (bestPipe != -1) {
+        deletePipelineElements();
+        currentPipes = new PipeLine(bestPipes[bestPipe]->first);
+        updateGrid();
+    }
+    progressBar.close();
+    solverIsRunning = false;
+}
+
+void MainWindow::clearRollBackPipeLine() {
+    if (originalPipes != nullptr) {
+        delete originalPipes;
+        originalPipes = nullptr;
+    }
+}
+
+void MainWindow::revertToRollBackPipeLine() {
     if (originalPipes == nullptr) {
         return;
     }

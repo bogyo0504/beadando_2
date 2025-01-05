@@ -105,6 +105,11 @@ private slots:
 
     void deletePipelineElements();
     void on_actionVissza_ll_t_s_triggered();
+    void on_optimal_clicked();
+
+    void clearRollBackPipeLine();
+
+    void revertToRollBackPipeLine();
 };
 
 #endif // MAINWINDOW_H

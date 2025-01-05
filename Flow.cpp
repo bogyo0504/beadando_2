@@ -6,7 +6,7 @@
 #include <QList>
 #include "Flow.h"
 
-bool Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfig) {
+int Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfig) {
     QList<GridPosition> valves = pipeLine.getValvePositions();
     QMap<GridPosition, bool> closedValves;
     grid = pipeLine.getGrid();
@@ -22,7 +22,7 @@ bool Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfi
         for (const GridPosition &sourcePosition: sources) {
             if (positions.contains(sourcePosition) && positions[sourcePosition] != NONE) {
                 if (positions[sourcePosition] != color) {
-                    return false;
+                    return -1;
                 }
                 continue;
             }
@@ -44,7 +44,7 @@ bool Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfi
                             continue;
                         }
                         if (pipeLine[newPosition].getColor() != color) {
-                            return false;
+                            return -1;
                         }
                     }
                     if (closedValves.contains(newPosition)) {
@@ -61,7 +61,7 @@ bool Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfi
                             continue;
                         }
                         if (pipeLine[newPosition].getColor() != color) {
-                            return false;
+                            return -1;
                         }
                     }
                     if (closedValves.contains(newPosition)) {
@@ -72,7 +72,7 @@ bool Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfi
                 }
                 if (hasNoConnection) {
                     if (pipeLine[current].hasConnentionInStep(step)) {
-                        return false;
+                        return -1;
                     }
                 }
             }
@@ -80,25 +80,26 @@ bool Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfi
         const QList<GridPosition> &sinks = pipeLine.getSinkPositions(color);
         for (const GridPosition &sinkPosition: sinks) {
             if (!positions.contains(sinkPosition) || positions[sinkPosition] != color) {
-                return false;
+                return -1;
             }
         }
     }
-    return true;
+    return positions.size(); //annyi helyen van flow, ahány position-ön végigfolyik a folyadék
 }
+//ezt a feladatot annyira bonyolult, hogy meglátta a halál és inkább megölte magát.
 
 
-bool Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase) {
+int Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase) {
     QList<GridPosition> valves = pipeLine.getValvePositions();
     grid = pipeLine.getGrid();
     for (int i = 0; i < (1 << valves.size()); i++) {
         positions.clear();
-        // TODO: Itt lehet, hogy meg kéne jegyezni, hogy melyik szelep volt nyitva....
-        if (makeFlow(pipeLine, phase, i)) {
-            return true;
+        int flowSize = makeFlow(pipeLine, phase, i);
+        if (flowSize >= 0) {
+            return flowSize;
         }
     }
-    return false;
+    return -1;
 }
 
 QString Flow::toQString() const {
