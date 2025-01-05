@@ -1,0 +1,13 @@
+1 -----
+4 ---0-
+2 -'---
+1 -|-cG
+4 -'   
+[Phases]
+G
+BY
+[Pipes]
+  -oG                    -  cG`
+  -oY     -  cY          -  cG`
+  -oB                    -  cB`
+`
