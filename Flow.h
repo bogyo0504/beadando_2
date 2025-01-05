@@ -12,9 +12,9 @@
 class Flow {
     QMap<GridPosition,TileColor> positions;
     Grid grid = Grid(0,0);
+    int makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfig);
 public:
 
-    int makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfig);
     int makeFlow(const PipeLine &pipeLine, const Phase &phase);
     QString toQString() const;
 

@@ -59,7 +59,6 @@ public:
 
     void disableOverlap();
 
-
     PipeLine resizeGrid(int width, int height) const;
 
     void removePostIts();

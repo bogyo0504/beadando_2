@@ -17,12 +17,12 @@ class PipeLineBuilder {
     bool debugging = false;
     GridPosition debugPosition = INVALID_POSITION;
     QStack<std::shared_ptr<BuildState>> buildStateStack;
+    BuildState buildPipeLine(BuildState state);
+    QPair<bool, BuildState> stepBack();
 public:
     PipeLineBuilder(const PipeLineValidator &validator, PipeLine &pipeline);
 
     ValidationResult build(const Stock &stock);
-
-    BuildState buildPipeLine(BuildState state);
 
     void debug();
 
@@ -30,7 +30,6 @@ public:
 
     void resetBuild();
 
-    QPair<bool, BuildState> stepBack();
 };
 
 
