@@ -11,7 +11,7 @@ int Flow::makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfig
     QMap<GridPosition, bool> closedValves;
     grid = pipeLine.getGrid();
     for (const GridPosition &valve: valves) {
-        if ((valveConfig & 1) == 0) {
+        if ((valveConfig & 1) != 0) {
             closedValves[valve] = true;
         }
         valveConfig >>= 1;

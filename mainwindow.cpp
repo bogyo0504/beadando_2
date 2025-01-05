@@ -606,6 +606,7 @@ void MainWindow::on_start_clicked() {
     originalPipes = new PipeLine(*currentPipes);
     QProgressDialog progressBar("Csővezeték építése", "Mégse", 0, 100, this);
     progressBar.setWindowModality(Qt::WindowModal);
+    progressBar.show();
 
     const PipeLineValidator &validator = WindowedFlowValidator(phases, progressBar);
     PipeLineBuilder builder = PipeLineBuilder(validator, *currentPipes);
@@ -660,6 +661,7 @@ void MainWindow::on_optimal_clicked() {
     
     QProgressDialog progressBar("Csővezeték építése", "Mégse", 0, 100, this);
     progressBar.setWindowModality(Qt::WindowModal);
+    progressBar.show();
 
     const PipeLineValidator &validator = WindowedFlowValidator(phases, progressBar);
     PipeLineBuilder builder = PipeLineBuilder(validator, *currentPipes);
