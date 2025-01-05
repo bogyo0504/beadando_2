@@ -21,7 +21,6 @@ class PipeLine {
 private:
     const Grid grid;
     QHash<GridPosition, Tile> tiles;
-    QStack<std::shared_ptr<BuildState>> states;
     bool overlappingEnabled = true;
 public:
 
@@ -41,7 +40,7 @@ public:
 
     bool checkConnection(const GridPosition &position, const GridPositionStep step, bool otherLevel) const;
 
-    BuildState addElementFromStock(const BuildState &state);
+    BuildState addElementFromStock(const BuildState &state, QStack<std::shared_ptr<BuildState>> &states);
 
     bool isEmpty(const GridPosition &position) const;
 
@@ -58,15 +57,10 @@ public:
 
     static PipeLine fromString(const QString &string);
 
-
-    QPair<bool, BuildState> stepBack();
-
     void disableOverlap();
 
 
     PipeLine resizeGrid(int width, int height) const;
-
-    void resetBuildStates();
 
     void removePostIts();
 

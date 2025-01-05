@@ -60,14 +60,14 @@ ValidationResult PipeLineBuilder::build(const Stock &stock) {
         }
         skipCurrentStep = false;
         while (true) {
-            QPair<bool, BuildState> successAndCurrentState = pipeline.stepBack();
+            QPair<bool, BuildState> successAndCurrentState = stepBack();
             if (!successAndCurrentState.first) {
                 return INVALID;
             }
             currentState = successAndCurrentState.second;
             currentState = BuildState(currentState.getPosition(), currentState.getStock(), TRY_NEXT,
                                       currentState.getCurrentTile(), currentState.getRotation());
-            currentState = pipeline.addElementFromStock(currentState);
+            currentState = pipeline.addElementFromStock(currentState, buildStateStack);
             if (currentState.getStatus() != OUT_OF_STOCK) {
                 if (debugging || debugPosition.covers(successAndCurrentState.second.getPosition())) {
                     if (currentState.getStatus() == IN_PROGRESS) {
@@ -94,7 +94,7 @@ ValidationResult PipeLineBuilder::build(const Stock &stock) {
 
 BuildState PipeLineBuilder::buildPipeLine(BuildState state) {
     while (state.getStatus() == IN_PROGRESS || state.getStatus() == TRY_NEXT) {
-        state = pipeline.addElementFromStock(state);
+        state = pipeline.addElementFromStock(state, buildStateStack);
     }
     return state;
 }
@@ -109,6 +109,15 @@ void PipeLineBuilder::printPosition(GridPosition position) {
 
 void PipeLineBuilder::resetBuild() {
     inProgress = false;
-    pipeline.resetBuildStates();
+    buildStateStack.clear();
     pipeline.removePostIts();
+}
+
+QPair<bool, BuildState> PipeLineBuilder::stepBack() {
+    if (buildStateStack.empty()) {
+        return {false, BuildState(INVALID_POSITION, Stock(), ERROR, PostIt, 0)};
+    }
+    BuildState state = *buildStateStack.pop();
+    pipeline.clear(state.getPosition());
+    return {true, state};
 }

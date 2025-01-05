@@ -101,7 +101,7 @@ bool PipeLine::checkConnection(const GridPosition &position, const GridPositionS
 //következő pozíciót a maradék stockkal
 
 
-BuildState PipeLine::addElementFromStock(const BuildState &state) {
+BuildState PipeLine::addElementFromStock(const BuildState &state, QStack<std::shared_ptr<BuildState>> &states) {
     if (state.getStatus() == READY) {
         return state;
     }
@@ -340,15 +340,6 @@ const Grid &PipeLine::getGrid() const {
     return grid;
 }
 
-QPair<bool, BuildState> PipeLine::stepBack() {
-    if (states.empty()) {
-        return {false, BuildState(INVALID_POSITION, Stock(), ERROR, PostIt, 0)};
-    }
-    BuildState state = *states.pop();
-    clear(state.getPosition());
-    return {true, state};
-}
-
 bool PipeLine::isEmptyAndAvailable(GridPosition position) {
     if (!isEmpty(position)) {
         return false;
@@ -430,12 +421,6 @@ PipeLine PipeLine::resizeGrid(int width, int height) const {
         copy.put(GridPosition(copy.grid, position.getStack(), position.getHorizontal(), position.getVertical()), tile);
     }
     return copy;
-}
-
-void PipeLine::resetBuildStates() {
-    states.clear();
-
-
 }
 
 void PipeLine::removePostIts() {
