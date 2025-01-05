@@ -13,10 +13,12 @@ class Flow {
     QMap<GridPosition,TileColor> positions;
     Grid grid = Grid(0,0);
 public:
+
     bool makeFlow(const PipeLine &pipeLine, const Phase &phase, int valveConfig);
     bool makeFlow(const PipeLine &pipeLine, const Phase &phase);
     QString toQString() const;
 
+    TileColor getTileColorAt(GridPosition &position) const;
 };
 
 

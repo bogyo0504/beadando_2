@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>921</width>
-    <height>520</height>
+    <height>558</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -242,8 +242,12 @@
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <widget class="QTableWidget" name="phasesWidget"/>
-       <widget class="QWidget" name="">
+       <widget class="QTableWidget" name="phasesWidget">
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+       </widget>
+       <widget class="QWidget" name="layoutWidget">
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <widget class="QLabel" name="label_4">
@@ -307,6 +311,7 @@
     <addaction name="actionBet_lt_s"/>
     <addaction name="actionKil_p_s"/>
     <addaction name="action_j_2"/>
+    <addaction name="actionVissza_ll_t_s"/>
    </widget>
    <addaction name="menuMen"/>
   </widget>
@@ -329,6 +334,11 @@
   <action name="action_j_2">
    <property name="text">
     <string>Új</string>
+   </property>
+  </action>
+  <action name="actionVissza_ll_t_s">
+   <property name="text">
+    <string>Visszaállítás</string>
    </property>
   </action>
  </widget>

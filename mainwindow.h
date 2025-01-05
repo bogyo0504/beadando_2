@@ -7,6 +7,7 @@
 #include "Stock.h"
 #include "PipeLine.h"
 #include "Phase.h"
+#include "Flow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -38,6 +39,8 @@ private:
     Stock currentstock;
     PipeLine *currentPipes;
     QList<Phase> phases;
+    Flow *flow = nullptr;
+    PipeLine *originalPipes = nullptr;
     bool solverIsRunning = false;
 
     void updateCurrentPipe();
@@ -98,6 +101,10 @@ private slots:
 
     void on_stock_cellClicked(int row, int column);
 
+    void on_phasesWidget_cellDoubleClicked(int row, int column);
+
+    void deletePipelineElements();
+    void on_actionVissza_ll_t_s_triggered();
 };
 
 #endif // MAINWINDOW_H

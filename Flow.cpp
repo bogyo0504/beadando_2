@@ -141,3 +141,10 @@ QString Flow::toQString() const {
     return result;
 }
 
+TileColor Flow::getTileColorAt(GridPosition &position) const {
+    if (positions.contains(position)) {
+        return positions[position];
+    }
+    return NONE;
+}
+

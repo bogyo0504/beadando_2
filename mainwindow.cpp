@@ -12,7 +12,7 @@
 #include "PipeLineBuilder.h"
 
 MainWindow::MainWindow(QWidget *parent)
-        : QMainWindow(parent), ui(new Ui::MainWindow), currentPipes(new PipeLine(Grid(3, 3))){
+        : QMainWindow(parent), ui(new Ui::MainWindow), currentPipes(new PipeLine(Grid(3, 3))) {
     ui->setupUi(this);
     fillComboBoxes();
     updateGrid();
@@ -22,6 +22,10 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() {
     delete ui;
     delete currentPipes;
+    if (flow != nullptr) {
+        delete flow;
+    }
+    delete originalPipes;
 }
 
 TileType MainWindow::stringToTileType(std::string s) {
@@ -227,9 +231,19 @@ void MainWindow::updateGrid() {
             pixmap = pixmap.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             QTableWidgetItem *item = new QTableWidgetItem();
             item->setData(Qt::DecorationRole, pixmap);
-            item->setBackground(QBrush(QColor(200, 200, 200), Qt::SolidPattern));
-            ui->pipeline->setColumnWidth(j, 80);
-            ui->pipeline->setRowHeight(i, 80);
+            QColor color = QColor(200, 200, 200);
+            if (flow != nullptr) {
+                TileColor currentColor = flow->getTileColorAt(currentPosition);
+                if (currentColor == NONE) {
+                    currentColor = flow->getTileColorAt(currentPositionOther);
+                }
+                if (currentColor != NONE) {
+                    color = tileColorToColor(currentColor);
+                }
+            }
+            item->setBackground(QBrush(color, Qt::SolidPattern));
+            ui->pipeline->setColumnWidth(j, 90);
+            ui->pipeline->setRowHeight(i, 90);
             ui->pipeline->setItem(i, j, item);
 
         }
@@ -395,7 +409,7 @@ void MainWindow::on_actionMent_s_triggered() {
         out << phase.toQString() << "\n";
     }
     out << "[Pipes]\n";
-    QStringList pipel =  currentPipes->toQString(false).split('\n');
+    QStringList pipel = currentPipes->toQString(false).split('\n');
     for (const QString &line: pipel) {
         out << line << '`' << "\n";
     }
@@ -441,25 +455,37 @@ void MainWindow::on_actionBet_lt_s_triggered() {
     QStringList pipesList;
     while (!in.atEnd()) {
         line = in.readLine();
-        if(line.endsWith('`')){
-            line = line.mid(0,line.size()-1);
+        if (line.endsWith('`')) {
+            line = line.mid(0, line.size() - 1);
         }
         if (line.size() % 5 != 0) {
             line += QString(5 - line.size() % 5, ' ');
         }
         pipesList.push_back(line);
     }
-    delete currentPipes;
+    if(originalPipes != nullptr){
+        delete originalPipes;
+        originalPipes = nullptr;
+    }
+    deletePipelineElements();
     currentPipes = new PipeLine(PipeLine::fromString(pipesList.join("\n")));
     updateStock();
     updateGrid();
     updatePhases();
 }
 
+void MainWindow::deletePipelineElements() {
+    delete currentPipes;
+    if (flow != nullptr) {
+        delete flow;
+        flow = nullptr;
+    }
+}
+
 
 void MainWindow::on_width_valueChanged(int arg1) {
     PipeLine copy = currentPipes->resizeGrid(arg1, currentPipes->getGrid().getHeight());
-    delete currentPipes;
+    deletePipelineElements();
     currentPipes = new PipeLine(copy);
     updateGrid();
 }
@@ -467,7 +493,7 @@ void MainWindow::on_width_valueChanged(int arg1) {
 
 void MainWindow::on_height_valueChanged(int arg1) {
     PipeLine copy = currentPipes->resizeGrid(currentPipes->getGrid().getWidth(), arg1);
-    delete currentPipes;
+    deletePipelineElements();
     currentPipes = new PipeLine(copy);
     updateGrid();
 }
@@ -542,24 +568,22 @@ void MainWindow::on_deletePhase_clicked() {
 }
 
 
-void MainWindow::on_addPhase_clicked()
-{
+void MainWindow::on_addPhase_clicked() {
     int row = ui->phasesWidget->currentRow();
 
     if (row == -1) {
         phases.push_back(Phase());
-    }
-    else {
+    } else {
         phases.insert(row, Phase());
     }
     updatePhases();
 }
 
 
-void MainWindow::on_action_j_2_triggered()
-{  phases.clear();
+void MainWindow::on_action_j_2_triggered() {
+    phases.clear();
     currentstock = Stock();
-    delete currentPipes;
+    deletePipelineElements();
     currentPipes = new PipeLine(Grid(3, 3));
     updateStock();
     updateGrid();
@@ -568,18 +592,21 @@ void MainWindow::on_action_j_2_triggered()
 }
 
 
-
-void MainWindow::on_actionKil_p_s_triggered()
-{
+void MainWindow::on_actionKil_p_s_triggered() {
     exit(0);
 }
 
 
-void MainWindow::on_start_clicked(){
+void MainWindow::on_start_clicked() {
+
     if (solverIsRunning) {
         return;
     }
     solverIsRunning = true;
+    if(originalPipes != nullptr){
+        delete originalPipes;
+    }
+    originalPipes = new PipeLine(*currentPipes);
     QProgressDialog progressBar("Csővezeték építése", "Mégse", 0, 100, this);
     progressBar.setWindowModality(Qt::WindowModal);
 
@@ -589,7 +616,7 @@ void MainWindow::on_start_clicked(){
     QCoreApplication::processEvents();
     if (builder.build(currentstock) != INVALID) {
         updateGrid();
-    }  else {
+    } else {
         QMessageBox::warning(this, "Hiba", "A csővezeték kirakása nem sikerült");
     }
     progressBar.close();
@@ -597,12 +624,35 @@ void MainWindow::on_start_clicked(){
 }
 
 
-void MainWindow::on_stock_cellClicked(int row, int column)
-{   if (column == -1) {
+void MainWindow::on_stock_cellClicked(int row, int column) {
+    if (column == -1) {
         return;
     }
     Tile key = currentstock.enumStock().keys().at(column);
     currenttile = key;
     updateCurrentPipe();
+}
+
+
+void MainWindow::on_phasesWidget_cellDoubleClicked(int row, int column) {
+    if (row == -1 || column == -1) {
+        return;
+    }
+    if (flow != nullptr) {
+        delete flow;
+    }
+    flow = new Flow();
+    flow->makeFlow(*currentPipes, phases[row]);
+    updateGrid();
+}
+
+
+void MainWindow::on_actionVissza_ll_t_s_triggered(){
+    if (originalPipes == nullptr) {
+        return;
+    }
+    deletePipelineElements();
+    currentPipes = new PipeLine(*originalPipes);
+    updateGrid();
 }
 
