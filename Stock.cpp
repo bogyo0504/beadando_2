@@ -39,7 +39,7 @@ Stock Stock::addTile(const Tile &tile, int howMany) const {
 
 Tile Stock::getNextTile(const Tile &tile) const {
 
-    auto it = stock.lowerBound(tile);
+    auto it = stock.lowerBound(tile); 
     if (it.key() == tile) {
         it++;
     }

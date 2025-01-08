@@ -35,15 +35,15 @@ bool GridPosition::operator!=(const GridPosition &rhs) const {
 }
 
 bool GridPosition::operator<(const GridPosition &rhs) const {
-    if (stack < rhs.stack)
-        return true;
-    if (rhs.stack < stack)
-        return false;
     if (vertical < rhs.vertical)
         return true;
     if (rhs.vertical < vertical)
         return false;
-    return horizontal < rhs.horizontal;
+    if (horizontal < rhs.horizontal)
+        return true;
+    if (rhs.horizontal < horizontal)
+        return false;
+    return stack < rhs.stack;
 }
 
 bool GridPosition::operator>(const GridPosition &rhs) const {
@@ -57,20 +57,21 @@ bool GridPosition::operator<=(const GridPosition &rhs) const {
 bool GridPosition::operator>=(const GridPosition &rhs) const {
     return !(*this < rhs);
 }
-
+//TODO: a bejárás vissza cik-cakra
 GridPosition GridPosition::operator++() const {
     if (stack < 0 || horizontal < 0 || vertical < 0 || stack > 1) {
         return INVALID_POSITION;
     }
+    if (stack == 0) {
+        return {grid, 1, horizontal, vertical};
+    }
     if (horizontal < grid.getWidth() - 1) {
-        return {grid, stack, horizontal + 1, vertical};
+        return {grid, 0, horizontal + 1, vertical};
     }
     if (vertical < grid.getHeight() - 1) {
-        return {grid, stack, 0, vertical + 1};
+        return {grid, 0, 0, vertical + 1};
     }
-    if (stack == 0) {
-        return {grid, 1, 0, 0};
-    }
+
     return INVALID_POSITION;
 }
 
@@ -78,15 +79,16 @@ GridPosition GridPosition::operator--() const {
     if (stack < 0 || horizontal < 0 || vertical < 0 || stack > 1 || horizontal >= grid.getWidth() || vertical >= grid.getHeight()) {
         return INVALID_POSITION;
     }
-    if (horizontal > 0) {
-        return {grid, stack, horizontal - 1, vertical};
-    }
-    if (vertical > 0) {
-        return {grid, stack, grid.getWidth() - 1, vertical - 1};
-    }
     if (stack == 1) {
         return {grid, 0, grid.getWidth() - 1, grid.getHeight() - 1};
     }
+    if (horizontal > 0) {
+        return {grid, 0, horizontal - 1, vertical};
+    }
+    if (vertical > 0) {
+        return {grid, 0, grid.getWidth() - 1, vertical - 1};
+    }
+
     return INVALID_POSITION;
 }
 

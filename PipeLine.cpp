@@ -4,28 +4,35 @@
 #include "PipeLine.h"
 
 bool PipeLine::canPut(const GridPosition position, const Tile &tile) const {
-    if (!overlappingEnabled && position.getStack() == 1) {
+    //Ha nincs overlaping, akkor csak az első stack-re lehet rakni
+    if (!overlappingEnabled && position.getStack() == 1 && tile != PostIt) {
         return false;
     }
     const GridPosition &otherPosition = position.step(OTHER_STACK);
     if (tile.isPostIt()) {
+        //A PostIt esetén, ha a másik pozícióban van valami, akkor csak megfelelő szomszédokkal lehet rátenni, tehát, ha szomszédjában nincs nyitott cső
+        //Ha másik stack is üres, a pozícióra PostIt csak akkor rakható, ha ez a 0-s stack
+        //összességében egymásra két PostIt-et ne rakjunk (ez egy vágás az algoritmusban)
         if (tiles.contains(otherPosition)) {
             return hasValidNeighbourghs(position, tile);
         }
         return position.getStack() == 0;
     }
+    //Az egyes stack-re csak akkor rakhatunk, ha az alsó nem üres
     if (!tiles.contains(otherPosition) && position.getStack() == 1) {
         return false;
     }
+    //Ha az otherPosition üres akkor az other egy PostIt
     const Tile other = (*this)[otherPosition];
-
+    //Ha a csempe sarok, akkor csak komplementer sarokra rakható vagy PostIt-re, és csak Normal típusú csempére
     if (tile.isCorner()) {
         if (!other.isPostIt()) {
             if (!other.isCorner() || other == tile) {
                 return false;
             }
             if (other.getConnections() !=
-                (tile.getConnections() ^ 15)) { //^15 a XOR, tehát visszaadja a komplementert pl. 1100-nak 0011-et
+                (tile.getConnections() ^
+                 15)) { //^15 a XOR, tehát visszaadja a komplementert pl. 1100-nak 0011-et, tehát a 12-re a 3
                 return false;
             }
             if (other.getType() != tile.getType()) {
@@ -37,14 +44,14 @@ bool PipeLine::canPut(const GridPosition position, const Tile &tile) const {
             //Ez a két kanyar egymásra rakása
         }
     } else {
+        //Minden más csak PostIt-re rakható rá
         if (!other.isPostIt()) {
             return false;
         }
-        //Minden más csak PostIt-re rakható rá
     }
+    //Csak akkor rakható rá a mezőre, ha me, hagyunk a szomszédokban nyitott csöveket
     return hasValidNeighbourghs(position, tile);
 
-    //A többi esetben a Tile-t rá lehet rakni a megadott pozícióra
 }
 
 Tile PipeLine::operator[](const GridPosition &position) const {
@@ -54,8 +61,6 @@ Tile PipeLine::operator[](const GridPosition &position) const {
         return PostIt;
     }
 }
-
-//Todo: Tesztelni a függvényt
 
 bool PipeLine::checkConnection(const GridPosition &position, const GridPositionStep step, bool otherLevel) const {
     const Tile tile = (*this)[position];
@@ -82,67 +87,73 @@ bool PipeLine::checkConnection(const GridPosition &position, const GridPositionS
     } else {
         return false;
     }
-    /**
-     * A checkConnection függvény ellenőrzi, hogy a két Tile között van-e kapcsolat.
-     * A kapcsolat akkor van, ha az egyik Tile-ban van egy csatlakozási pont, ami a másik Tile-ban van.
-     * A csatlakozási pontokat a CSP_TOP, CSP_RIGHT, CSP_BOTTOM, CSP_LEFT konstansokkal lehet ellenőrizni.
-     * A függvény visszatérési értéke true, ha van kapcsolat, false, ha nincs.
-     */
 }
 
-
-/*
- * TODO: Optimalizációk:
- * - Csak Normálra lehet rakni bármit is.
- */
-
-//Megpróbálni a stockból a currenttilet kiszedni, ha a  nincs készlet a stockban az adott tileból, akkor
-//meg kell keresni a következő stockból a következő tile-t és az így kapott tile-t be kell rakni a gridbe és vissza kell adni a
-//következő pozíciót a maradék stockkal
-
-
-BuildState PipeLine::addElementFromStock(const BuildState &state, QStack<std::shared_ptr<BuildState>> &states) {
+BuildState PipeLine::applyBuildState(const BuildState &state, QStack<std::shared_ptr<BuildState>> &states) {
+    //ha az állapot befejezett, szimplán a befejezett állapotot fogja visszaadni
     if (state.getStatus() == READY) {
         return state;
     }
-    //ha az állapot befejezett, szimplán a befejezett állapotot fogja visszaadni
-    if (state.getPosition() == INVALID_POSITION) {
-        return {INVALID_POSITION, state.getStock(), READY, PostIt, 0};
-    }
+
     //ha a pozíció invalid, tehát olyan helyre akarunk Tile-t tenni, amelyre nem lehet, akkor egy olyan
     //állapottal tér vissza, amely az invalid pozíciót, az adott állapotban lévő készletet adja vissza,
     //illetve késznek állítja az állapotot
-
-    GridPosition currentPosition = state.getPosition();
-
-    if (!isEmpty(currentPosition)) {
-        while (!isEmptyAndAvailable(currentPosition)) {
-            currentPosition = ++currentPosition;
-            if (currentPosition == INVALID_POSITION) {
-                return {INVALID_POSITION, state.getStock(), READY, PostIt, 0};
-            }
-        }
+    // Ezzel stabilizáljuk az algoritmust, hogy ne akarjon lejebb menni az építési fájlban
+    if (state.getPosition() == INVALID_POSITION) {
+        return {INVALID_POSITION, state.getStock(), READY, PostIt, 0};
     }
+
+
 //Inicializálja a currentPosition változót az aktuális állapot pozíciójával.
 //Ha az aktuális pozíció nem üres, iterálva keresi a következő üres pozíciót, növelve a currentPosition értékét.
 //A ++ a GridPositionben van megírva, ez már valójában úgy megy végig, hogy először a sorokon, majd az oszlopokon, miközben a
 //második dimenziót is bejárja (lásd. Gridposition: GridPosition operator++() const
 //Ha érvénytelen pozícióhoz ér, egy új, kész állapotra (BuildState) tér vissza INVALID_POSITION-nel, az aktuális készlettel és egy PostIt csempével.
+    GridPosition currentPosition = state.getPosition();
 
+    if (!isEmpty(currentPosition)) {
+        while (!isEmptyAndAvailable(currentPosition)) {
+            currentPosition = ++currentPosition;
+            //Ha nincs további csempehely
+            if (currentPosition == INVALID_POSITION) {
+                return {INVALID_POSITION, state.getStock(), READY, PostIt, 0};
+            }
+        }
+    }
+    //Fontos, hogy a stockban legyen olyan csempe, amit le akarunk rakni
+    //Megjegyzés PostIt mindig van, bár soha sem lehet valódi készlete
     if (state.getStock().contains(state.getCurrentTile())) {
+        //Kivesszük a készletből a csempét
         Stock newStock = state.getStock() - state.getCurrentTile();
-
-
+        //A csempét elforgatjuk a BuildState-ben tárolt forgatási állapotnak megfelelően
         const Tile &rotatedTile = state.getCurrentTile().rotate(state.getRotation());
+        //Ha a csempét nem lehet az adott pozícióra rakni vagy muszáj váltani csempét az adott pozícióra, akkor
+        //megpróbálja a következő csempét kiválasztani
         if (state.getStatus() == TRY_NEXT || !canPut(currentPosition, rotatedTile)) {
+            //Ha már nem tudjuk forgatni a csempét, akkor a következő lerakható csempét választjuk ki
+            //A lerakhatóság helyben vizsgálata egy optimalizásiós lépés
+            /*
+             currentRotation = state.getRotation();
+             while(currentRotation < state.getCurrentTile().getMaxPossibleRotation() - 1){
+                    currentRotation++;
+                    if(canPut(currentPosition, state.getCurrentTile().rotate(currentRotation))){
+                        return {currentPosition, state.getStock(), IN_PROGRESS, state.getCurrentTile(), currentRotation};
+                    }
+                }
+             */
             if (state.getRotation() >= state.getCurrentTile().getMaxPossibleRotation() - 1) {
                 Tile currentTile = state.getCurrentTile();
+                //Ez a ciklus addig megy, amíg a készletben talál egy olyan csempét, amelyet rá lehet tenni a pozícióra vagy a készletben nincs több csempe
                 while (true) {
+                    //Ez a készlet következő elemet adja vissza, ha a készletben nincs több elem, akkor PostIt-et ad vissza
                     Tile newTile = state.getStock().getNextTile(currentTile);
-
+                    //Ha nincs több elem a készleten akkor ezt jelezzük és nem haladunk tovább az építési fában, ezért adunk INVALID_POSITION-t
                     if (newTile == PostIt) {
                         return {INVALID_POSITION, state.getStock(), OUT_OF_STOCK, PostIt, 0};
                     } else {
+                        //Ha talál egy olyan csempét a készleten, akkor megkeresi a megfelelő forgatást és megvizsgálja, hogy az adott pozícióra rakható-e
+                        //INVALID_ROTATION-t ad vissza, ha nem lehet rátenni a csempét
+                        //Ha a csempe rátehető, akkor visszatérünk az új állapottal
                         const Rotation rotation = findRotation(currentPosition, newTile);
                         if (rotation != INVALID_ROTATION) {
                             return {currentPosition, state.getStock(), IN_PROGRESS, newTile, rotation};
@@ -151,18 +162,27 @@ BuildState PipeLine::addElementFromStock(const BuildState &state, QStack<std::sh
                     currentTile = newTile;
                 }
             } else {
+                //Ha lehetséges még a csempe forgatása, akkor megpróbáljuk forgatni a csempét
+                //TODO: Ezt a részt lehetne optimalizálni, mert a csempe forgatásánál vizsgálható lenne, hogy a csempe rátehető-e a pozícióra, az if rész kivehető
                 return {currentPosition, state.getStock(), IN_PROGRESS, state.getCurrentTile(),
                         (Rotation) (state.getRotation() + 1)};
             }
         } else {
+            //Ha lerakható ide a csempe akkor le is rakjuk a pozícióra
+            //Fontos: az elforgatást is figyelembe kell venni
+            //Belerakjuk a stackbe az adott állapotot, ezzel lejebb lépve az építési fában
+            //Új BuildState-t hozunk létre, mert a pozíció elmozdulhatott a paraméterhez képest
             put(currentPosition, rotatedTile);
             states.push(std::make_shared<BuildState>(
                     BuildState(currentPosition, state.getStock(), IN_PROGRESS, state.getCurrentTile(),
                                state.getRotation())));
+            //Az új állapot (lelépünk a fában egyet) a következő pozíció, a csökkentett készlet, az IN_PROGRESS állapot, és a PostIt, 0-s forgatással
             return {++currentPosition, newStock, IN_PROGRESS, PostIt, 0};
         }
 
     } else {
+        //Ha valamiért nincs a készletben a BuildState-ben lévő csempe, akkor megpróbáljuk a következő csempét kiválasztani
+        //Ez az ág az algoritmusban elvileg nem kap szerepet, csak stabilizációs szerepe van
         const Tile &newTile = state.getStock().getNextTile(state.getCurrentTile());
         if (newTile == PostIt) {
             return {INVALID_POSITION, state.getStock(), OUT_OF_STOCK, PostIt, 0};
@@ -171,22 +191,8 @@ BuildState PipeLine::addElementFromStock(const BuildState &state, QStack<std::sh
         }
     }
 }
-//Ellenőrzi, hogy a jelenlegi csempe megtalálható-e a készletben.
-//Ha igen, frissíti a készletet azáltal, hogy eltávolítja a jelenlegi csempét, majd ellenőrzi, hogy a csempe elhelyezhető-e a currentPosition pozíciónál:
-//Ha nem, lekéri és visszaadja a következő csempét a készletből:
-//Ha a következő csempe PostIt, akkor egy kész, INVALID_POSITION-nel jelölt BuildState állapotot ad vissza.
-//Ellenkező esetben visszaadja az új állapotot a következő csempével.
-//Ha igen, elhelyezi a csempét, elmenti az előző állapotot, és visszaadja a frissített állapotot.
-//Ha a jelenlegi csempe nincs a készletben:
-//Lekéri a következő csempét a készletből:
-//Ha a következő csempe PostIt, egy kész BuildState állapotot ad vissza INVALID_POSITION-nel.
-//Egyébként az új állapotot adja vissza a következő csempével.
-
 PipeLine &PipeLine::put(const GridPosition position, const Tile &tile) {
-    // if (canPut(position, tile)) {
     tiles[position] = tile;
-
-    // }
     return *this;
 }
 
@@ -378,28 +384,66 @@ bool PipeLine::hasValidNeighbourghs(const GridPosition &position, const Tile &ti
 
 bool PipeLine::hasValidNeighbourgh(const GridPosition &position, const Tile &tile, GridPositionStep step,
                                    int selfConnectionMask, int otherConnectionMask) const {
-    if (tile.isPostIt()) {
-        return true;
-    }
+    //Ez a szomszéd, illetve a szomszéd feletti/alatti csempe pozíciója
     const GridPosition &otherPosition = position.step(step);
     const GridPosition &otherStackOtherPosition = otherPosition.step(OTHER_STACK);
+    //Az adott csempéből az adott irányba van-e nyitott cső
     bool myConnection = tile.hasConnectionInDirection(selfConnectionMask);
+    //Ha a "lelógunk" a gridről, azaz a megfelelő irányba lévő szomszéd nincs a griden akkor abba az irányba nem lehet nyitott cső
     if (otherPosition == INVALID_POSITION || otherStackOtherPosition == INVALID_POSITION) {
         return !myConnection;
     }
+    //Ha mindkét szinten üres a szomszéd mező, akkor a csempe letehető ebből az irányból nézve
     if (!tiles.contains(otherPosition) && !tiles.contains(otherStackOtherPosition)) {
         return true;
     }
+    //A szomszédos csempék és a megfelelő irányban vett csőkapcsolatok, az adott csempe irányába
     const Tile &otherTile = (*this)[otherPosition];
     const Tile &otherStackOtherTile = (*this)[otherStackOtherPosition];
     bool otherConnection = otherTile.hasConnectionInDirection(otherConnectionMask);
     bool otherStackOtherConnection = otherStackOtherTile.hasConnectionInDirection(otherConnectionMask);
+    //Ha az adott csempe PostIt
+    if (tile.isPostIt()) {
+        const GridPosition &pairPosition = position.step(OTHER_STACK);
+        const Tile &pairTile = (*this)[pairPosition];
+        // Ha a párja nem PostIt
+        if (!pairTile.isPostIt()) {
+            // Ha a párja kanyar és nincs kapcsolat azon a szomszéddal, akkor ez nem lehet postIt
+            if (pairTile.isCorner()) {
+                const bool cornerHasConnection = pairTile.hasConnectionInDirection(selfConnectionMask);
+                if (!cornerHasConnection && (otherConnection || otherStackOtherConnection)) {
+                    return false;
+                }
+            }
+            // PostIt letehető
+            return true;
+        }
+    }
+
+    //Ha van nyitott cső a csempéből és valamelyik szomszédnak is van erre a csempére nyitott csöve, akkor le lehet rakni a csempét
+    //Ha nincs egyiknek sem nyitott csöve akkor biztos nem rakható le
     if (myConnection) {
         if (otherConnection || otherStackOtherConnection) {
             return true;
         }
-        return false;
+        //Ha már a szomszédoknál mindkét szinten van csempe és nincs nyitott cső, akkor nem lehet rátenni a csempét
+        if (tiles.contains(otherPosition) && tiles.contains(otherStackOtherPosition)) {
+            return false;
+        }
+        // Ha csak az egyik szinten van csempe, de az nem kanyar, akkor nem lehet rátenni a csempét, tehát már biztos
+        // hogy nem lesz kapcsolat.
+        if (tiles.contains(otherPosition) && !otherTile.isCorner()) {
+            return false;
+        }
+        if (tiles.contains(otherStackOtherPosition) && !otherStackOtherTile.isCorner()) {
+            return false;
+        }
+        //TODO: Ezt a részt lehetne optimalizálni, a stockot odaadni a függvénynek, hogy megvizsgálja, hogy van-e még kanyar
+        //TODO: A szélén ne próbákozzon a kanyarokkal (És persze már megint mivel van baj) X(
+        return true;
     }
+    //Ha a csempe kanyar és a másik vagy kanyar vagy PostIt, akkor le lehet rakni
+    //Bár a csempéből nincs a szomszéd felé kapcsolat, de később a rárakott csempe miatt még lehet
     if (tile.isCorner()) {
         const GridPosition &pairPosition = position.step(OTHER_STACK);
         const Tile &pairTile = (*this)[pairPosition];
@@ -407,6 +451,7 @@ bool PipeLine::hasValidNeighbourgh(const GridPosition &position, const Tile &til
             return true;
         }
     }
+    //Ha nincs abban az irányban kapcsolat akkor a szomszédban sem lehet errefelé kapcsolat
     return !otherConnection && !otherStackOtherConnection;
 }
 

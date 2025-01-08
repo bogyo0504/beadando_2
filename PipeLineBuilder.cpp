@@ -67,7 +67,7 @@ ValidationResult PipeLineBuilder::build(const Stock &stock) {
             currentState = successAndCurrentState.second;
             currentState = BuildState(currentState.getPosition(), currentState.getStock(), TRY_NEXT,
                                       currentState.getCurrentTile(), currentState.getRotation());
-            currentState = pipeline.addElementFromStock(currentState, buildStateStack);
+            currentState = pipeline.applyBuildState(currentState, buildStateStack);
             if (currentState.getStatus() != OUT_OF_STOCK) {
                 if (debugging || debugPosition.covers(successAndCurrentState.second.getPosition())) {
                     if (currentState.getStatus() == IN_PROGRESS) {
@@ -94,7 +94,7 @@ ValidationResult PipeLineBuilder::build(const Stock &stock) {
 
 BuildState PipeLineBuilder::buildPipeLine(BuildState state) {
     while (state.getStatus() == IN_PROGRESS || state.getStatus() == TRY_NEXT) {
-        state = pipeline.addElementFromStock(state, buildStateStack);
+        state = pipeline.applyBuildState(state, buildStateStack);
     }
     return state;
 }

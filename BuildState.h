@@ -8,12 +8,20 @@
 #include "Stock.h"
 #include "GridPosition.h"
 
+/**
+ * A BuildStatus enum a BuildState osztályban a különböző állapotokat reprezentálja.
+ * ERROR - Hiba történt, READY - Kész a puzzle, IN_PROGRESS - Folyamatban van a puzzle, TRY_NEXT - Próbálja a következőt, OUT_OF_STOCK - Elfogyott a készlet
+ */
 enum BuildStatus {
     ERROR, READY, IN_PROGRESS, TRY_NEXT, OUT_OF_STOCK
 };
 
-//Adott pozícióban az adott stockból kell rakni, illetve jelöljük, ha készen van a puzzle
-
+/**
+ * A BuildState osztály a pályaépítési fa éleit reprezentálja.
+ * Ezt használjuk a visszalépéses algoritmusban, BuildState-nként haladunk és lépünk vissza.
+ * Tudjuk az aktuális pozíciót, a készletet, amelyet még fel tudunk használni, a építés állapotát,
+  az aktuális csempét, amelyet leraktunk és annak a  forgatási állapotát.
+ */
 class BuildState {
 private:
     GridPosition position;
@@ -38,8 +46,6 @@ private:
     BuildStatus getStatus() const;
 
     const Tile &getCurrentTile() const;
-
-
 
 };
 

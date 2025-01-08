@@ -39,7 +39,7 @@ TEST_CASE("Teszteljük a GridPosition funkcióit") {
     CHECK(gp3 != gp2);
     CHECK(gp3 > gp2);
     CHECK(gp3.getHorizontal() == 2);
-    CHECK(gp3.getStack() == 1);
+    CHECK(gp3.getStack() == 0);
     CHECK(gp3.getVertical() == 1);
     GridPosition gp4 = gp1.step(GridPositionStep::RIGHT);
     CHECK(gp4.getHorizontal() == 2);
@@ -309,7 +309,7 @@ TEST_CASE("Teszteljük a PipeLineBuilder funkciót 4x3-as tesztpéldán") {
     PipeLineBuilder pipeLineBuilder(validator, pipeline);
     // pipeLineBuilder.printPosition(GridPosition(pipeline.getGrid(), -1, 0, 1));
     // pipeLineBuilder.debug();
-    // validator.debug();
+    //   validator.debug();
     CHECK(pipeLineBuilder.build(stock).getType()==VR_VALID);
     std::cout << pipeline.toQString(true).toStdString();
 }
