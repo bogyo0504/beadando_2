@@ -95,6 +95,11 @@ bool Tile::isCorner() const {
     return connections == 3 || connections == 6 || connections == 9 || connections == 12;
 }
 
+bool Tile::isStackableCorner() const {
+    return type == NORMAL && isCorner();
+}
+
+
 bool Tile::isPostIt() const {
     return connections == 0;
 }
@@ -272,6 +277,7 @@ QString Tile::typeAndColorToChar(bool hasRightItem) const {
     }
     return result;
 }
+
 
 
 

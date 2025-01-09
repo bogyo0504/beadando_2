@@ -24,11 +24,13 @@
 class PipeLine {
 private:
     const Grid grid;
+
     /**
      * A tiles tárolja a csempéket a pozíciójuk alapján.
      * A QHash haszálata gyorsítja valamennyire a keresést.
      */
     QHash<GridPosition, Tile> tiles;
+
     /**
      * Az overlappingEnabled változó azt mondja meg, hogy a PipeLine-ban lehetnek-e egymásra rakható csempék.
      */
@@ -143,7 +145,7 @@ private:
      * A findRotation függvény megadja, hogy a megadott pozícióban lévő csempét milyen forgatással lehet elhelyezni.
      * A legelső lehetsége forgatással tér vissza vagy INVALID_ROTATION-t ad vissza, ha nem lehet rátenni a csempét.
      */
-    Rotation findRotation(GridPosition position, Tile tile) const;
+    Rotation findRotation(GridPosition position, Tile tile, Rotation startingRotation) const;
 
     /**
      * A hasValidNeighbourghs függvény megadja, hogy minden irányban megnézi, hogy az adott csempe és a szomszédja abban az irányban
@@ -158,7 +160,7 @@ private:
      * olyan amit valójában be lehetne rakni
      * A helyességez majd a Flow és a PipeLine osztály ellenőrzi.
      */
-    bool hasValidNeighbourghs(const GridPosition &position, const Tile &tile) const;
+    bool hasValidNeighbourghs(const GridPosition &position, const Tile &tile, int checkLevel) const;
 
     /**
      * A hasValidNeighbourgh függvény megadja, hogy az adott pozícióban lévő csempe és a szomszédja abban az irányban
@@ -166,8 +168,8 @@ private:
      * Nem összeilleszthető, ha a szomszédcsempéről vagy az adott csempéről anyag kifolyik.
      */
     bool
-    hasValidNeighbourgh(const GridPosition &position, const Tile &tile, GridPositionStep step, int selfConnectionMask,
-                        int otherConnectionMask) const;
+    hasValidNeighbourgh(const GridPosition &position, const Tile &tile, GridPositionStep step,
+                        int selfConnectionMask, int otherConnectionMask, int checkLevel) const;
 };
 
 

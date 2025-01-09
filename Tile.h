@@ -160,6 +160,8 @@ public:
      */
 
     QString typeAndColorToChar(bool hasRightItem) const;
+
+    bool isStackableCorner() const;
 };
 
 
