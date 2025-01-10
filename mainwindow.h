@@ -42,6 +42,8 @@ private:
     Flow *flow = nullptr;
     PipeLine *originalPipes = nullptr;
     bool solverIsRunning = false;
+    // Akkor true, amikor a program igazítja a pipeline gridjéhez a SpinBoxokat
+    bool gridSizeReset;
 
     void updateCurrentPipe();
 
@@ -110,6 +112,7 @@ private slots:
     void clearRollBackPipeLine();
 
     void revertToRollBackPipeLine();
-};
+
+ };
 
 #endif // MAINWINDOW_H

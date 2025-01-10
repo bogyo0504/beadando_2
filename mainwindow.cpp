@@ -194,9 +194,15 @@ void MainWindow::updatePhases() {
 
 //A csőrendszer frissítése
 void MainWindow::updateGrid() {
+    gridSizeReset = true;
     //A csőrendszer méretét beállítja a gird méretének megfelelően a SpinBoxokba
-    ui->width->setValue(currentPipes->getGrid().getWidth());
-    ui->height->setValue(currentPipes->getGrid().getHeight());
+    if (ui->width->value() != currentPipes->getGrid().getWidth()) {
+        ui->width->setValue(currentPipes->getGrid().getWidth());
+    }
+    if (ui->height->value() != currentPipes->getGrid().getHeight()) {
+        ui->height->setValue(currentPipes->getGrid().getHeight());
+    }
+    gridSizeReset = false;
     //A méretet állítja az x és y pozíciók maximum értékét a grid méretének megfelelően
     ui->xpos->setMaximum(currentPipes->getGrid().getWidth());
     ui->ypos->setMaximum(currentPipes->getGrid().getHeight());
@@ -530,6 +536,9 @@ void MainWindow::deletePipelineElements() {
 
 //A játéktér szélességének változását kezeli
 void MainWindow::on_width_valueChanged(int arg1) {
+    if (gridSizeReset) {
+        return;
+    }
     PipeLine copy = currentPipes->resizeGrid(arg1, currentPipes->getGrid().getHeight());
     revertToRollBackPipeLine();
     currentPipes = new PipeLine(copy);
@@ -538,6 +547,9 @@ void MainWindow::on_width_valueChanged(int arg1) {
 
 
 void MainWindow::on_height_valueChanged(int arg1) {
+    if (gridSizeReset) {
+        return;
+    }
     PipeLine copy = currentPipes->resizeGrid(currentPipes->getGrid().getWidth(), arg1);
     //A méret megváltozik, új csőrendszert jön létre, amibe visszatöltjük az előzőnek a tartalmát
     revertToRollBackPipeLine();
